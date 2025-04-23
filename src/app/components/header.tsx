@@ -24,13 +24,7 @@ const Header = () => {
                 Ángeles y Valientes
                 </Button>
             </Menu.Trigger>
-            <Portal>
-                <Menu.Positioner>
-                <Menu.Content>
-                    <Menu.Item value="new-txt" >New Text File</Menu.Item>
-                </Menu.Content>
-                </Menu.Positioner>
-            </Portal>
+            
           </Menu.Root>
           <Menu.Root>
             <Menu.Trigger asChild>
@@ -57,8 +51,8 @@ const Header = () => {
             <Portal>
                 <Menu.Positioner>
                 <Menu.Content>
-                    <Menu.Item value="new-txt">Reporte 1</Menu.Item>
-                    <Menu.Item value="new-file">Reporte 2</Menu.Item>
+                    <Menu.Item value="new-txt">Reporte de Clases</Menu.Item>
+                    <Menu.Item value="new-file">Estadísticas</Menu.Item>
                 </Menu.Content>
                 </Menu.Positioner>
             </Portal>
