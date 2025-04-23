@@ -5,6 +5,7 @@ import { Image } from "@chakra-ui/react/image";
 import { useEffect, useState } from "react";
 import { fetchPersonInfo } from "../helpers/api";
 import Link from "next/link";
+import PhotoDropzone from "./photoDropzone";
 
 const PersonSideNav = ({personId} : {personId: string}) => {
   const [persona, setPersona] = useState<any>({});
@@ -28,35 +29,31 @@ const PersonSideNav = ({personId} : {personId: string}) => {
             {/*<div className="size-[10rem] bg-red-200 rounded-full mb-2 items-center">
             </div>*/}
             <Dialog.Root placement="center">
-      <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm">
-          Open Dialog
-        </Button>
-      </Dialog.Trigger>
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Body pt="4">
-              <Dialog.Title>Dialog Title</Dialog.Title>
-              <Dialog.Description mb="4">
-                This is a dialog with some content and a video.
-              </Dialog.Description>
-              <AspectRatio ratio={4 / 3} rounded="lg" overflow="hidden">
-                <iframe
-                  title="naruto"
-                  src="https://www.youtube.com/embed/QhBnZ6NPOY0"
-                  allowFullScreen
-                />
-              </AspectRatio>
-            </Dialog.Body>
-            <Dialog.CloseTrigger top="0" insetEnd="-12" asChild>
-              <CloseButton bg="bg" size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Button variant="outline" size="sm">
+                  Editar Foto
+                </Button>
+              </Dialog.Trigger>
+              <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                  <Dialog.Content>
+                    <Dialog.Body pt="4">
+                      <Dialog.Title>Foto de Perfil</Dialog.Title>
+                      <Dialog.Description mb="4">
+                        Arrastra o sube la foto de perfil de la persona
+                      </Dialog.Description>
+                      <AspectRatio ratio={4 / 3} rounded="lg" overflow="hidden">
+                        <PhotoDropzone personId={personId} />
+                      </AspectRatio>
+                    </Dialog.Body>
+                    <Dialog.CloseTrigger top="0" insetEnd="-12" asChild>
+                      <CloseButton bg="bg" size="sm" />
+                    </Dialog.CloseTrigger>
+                  </Dialog.Content>
+                </Dialog.Positioner>
+              </Portal>
+            </Dialog.Root>
             {/*<iframe src="https://drive.google.com/file/d/1h-G0jGKPPFprWBBzDye6iA_SxO2LCqxS/preview" width="200" height="200" allow="autoplay"></iframe>*/}
             <p className="text-[15px] ml-3 text-black font-semibold">{persona.txPrimerNombre} {persona.txSegundoNombre}</p>
             <p className="text-[15px] ml-3 text-black font-semibold">{persona.txPrimerApellido} {persona.txSegundoApellido}</p>
@@ -85,12 +82,13 @@ const PersonSideNav = ({personId} : {personId: string}) => {
             <Link href={`/main/people/${personId}/valiente`} className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3">
               <p className="hidden md:block">Datos personales</p>
             </Link>
+            <Link href={`/main/people/${personId}/valiente/vivienda`} className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3">
+              <p className="hidden md:block">Vivienda</p>
+            </Link>
             <Link href="" className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3">
               <p className="hidden md:block">Estudios</p>
             </Link>
-            <a href="" className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3">
-              <p className="hidden md:block">Visita Domiciliaria</p>
-            </a>
+            
             <a href="" className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3">
               <p className="hidden md:block">Informes Clínicos</p>
             </a>

@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchClasificacionesValiente, fetchGeneros, fetchPersonInfo, fetchTiposIdentificacion, savePersona } from "@/app/helpers/api";
+import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona } from "@/app/helpers/api";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { Button, Checkbox, Em, Field, Input } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
@@ -24,7 +24,7 @@ interface FormValues {
   poblacionJoven: boolean
   poblacionMujer: boolean
   poblacionLgtbiq: boolean
-  genero: string
+  grupoEtnico: string
   clasificacionValiente: string
 }
 
@@ -32,8 +32,8 @@ const PersonPage = () => {
   const params = useParams()
   const personId = params.person as string
   const [clasificacionesValiente, setClasificaciones] = useState<any>([]);
+  const [gruposEtnicos, setGruposEtnicos] = useState<any>([]);
   const [persona, setPersona] = useState<any>();
-  const [errorMessage, setErrorMessage] = useState('');
   const { register, handleSubmit, setValue, getValues, formState: { errors, isSubmitting } } = useForm<FormValues>()
 
   useEffect(() => {
@@ -45,11 +45,16 @@ const PersonPage = () => {
         Object.entries(resPersona).forEach(([key, value]) => {
           if (value && typeof value !== 'object') setValue(key as keyof FormValues, String(value))
         })
+
+        // Asignar valores especiales de objetos anidados
+        setValue("clasificacionValiente", resPersona.clasificacionValiente?.id.toString())
+        setValue("grupoEtnico", resPersona.grupoEtnico?.id.toString())
       }
     }
 
     async function getLists() {
       setClasificaciones(await fetchClasificacionesValiente())
+      setGruposEtnicos(await fetchGruposEtnicos())
     }
 
     getLists();
@@ -95,8 +100,7 @@ const PersonPage = () => {
                 Clasificación valiente <Em className="text-red-500">*</Em>
               </label>
               <select {...register("clasificacionValiente")}
-                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                defaultValue={persona?.clasificacionValiente.id.toString()}
+                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 {clasificacionesValiente.map((clasificacion: any) => (
                       <option key={clasificacion.id} value={clasificacion.id.toString()}>{clasificacion.descripcion.toString()}</option>
@@ -127,68 +131,20 @@ const PersonPage = () => {
           <div className="flex flex-wrap -mx-3 mb-4 justify-between">
             <Text className="text-xs px-3 mb-2">Grupos poblacionales</Text>
           </div>
-          <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full md:w-1/3 px-3 mb-4">
-              <Checkbox.Root
-                defaultChecked={persona?.poblacionConflictoArmado}
-                {...register("poblacionConflictoArmado")}
-                className="flex items-center gap-2"
+          <div className="flex flex-wrap -mx-3 mb-6 items-center">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
+                Grupo Étnico <Em className="text-red-500">*</Em>
+              </label>
+              <select {...register("grupoEtnico")}
+                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">Víctima del conflicto armado</Checkbox.Label>
-              </Checkbox.Root>
+                {gruposEtnicos.map((grupoEtnico: any) => (
+                      <option key={grupoEtnico.id} value={grupoEtnico.id.toString()}>{grupoEtnico.descripcion.toString()}</option>
+                ))}
+              </select>
             </div>
-
-            <div className="w-full md:w-1/3 px-3 mb-4">
-              <Checkbox.Root
-                defaultChecked={persona?.poblacionMigrante}
-                {...register("poblacionMigrante")}
-                className="flex items-center gap-2"
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">Migrante</Checkbox.Label>
-              </Checkbox.Root>
-            </div>
-
-            <div className="w-full md:w-1/3 px-3 mb-4">
-              <Checkbox.Root
-                defaultChecked={persona?.poblacionJoven}
-                {...register("poblacionJoven")}
-                className="flex items-center gap-2"
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">Jóven</Checkbox.Label>
-              </Checkbox.Root>
-            </div>
-
-            <div className="w-full md:w-1/3 px-3 mb-4">
-              <Checkbox.Root
-                defaultChecked={persona?.poblacionJoven}
-                {...register("poblacionJoven")}
-                className="flex items-center gap-2"
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">Persona con discapacidad</Checkbox.Label>
-              </Checkbox.Root>
-            </div>
-
-            <div className="w-full md:w-1/3 px-3 mb-4">
-              <Checkbox.Root
-                defaultChecked={persona?.poblacionMujer}
-                {...register("poblacionMujer")}
-                className="flex items-center gap-2"
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">Mujer</Checkbox.Label>
-              </Checkbox.Root>
-            </div>
-
-            <div className="w-full md:w-1/3 px-3 mb-4">
+            <div className="w-full md:w-1/2 md:ps-6 pt-4 inline-block">
               <Checkbox.Root
                 defaultChecked={persona?.poblacionLgtbiq}
                 {...register("poblacionLgtbiq")}
@@ -196,9 +152,10 @@ const PersonPage = () => {
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
-                <Checkbox.Label className="text-sm">LGTBIQ+</Checkbox.Label>
+                <Checkbox.Label className="text-sm">¿Hace parte de la comunidad LGTBIQ+?</Checkbox.Label>
               </Checkbox.Root>
             </div>
+
           </div>
           <div className="flex flex-wrap -mx-3 mb-4 justify-between">
             <Text className="text-xs px-3 mb-2">Responsable</Text>

@@ -1,7 +1,7 @@
 import { Box, FileUpload, Icon } from "@chakra-ui/react"
 import { LuUpload } from "react-icons/lu"
 
-const PhotoDropzone = () => {
+const PhotoDropzone = ({personId} : {personId: string}) => {
   return (
     <FileUpload.Root maxW="xl" alignItems="stretch" maxFiles={10}>
       <FileUpload.HiddenInput />

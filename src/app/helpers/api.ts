@@ -96,7 +96,7 @@ export const fetchPersonInfo = async (idPersona: string) => {
 
 export const savePersona = async (formData: FormData) => {
   try {
-    const idPersona = formData.get('tipoIdentificacion')
+    const idPersona = formData.get('idPersona')
 
     const result = await apiFetch(`/personas${idPersona ? '/' + idPersona : ''}`, {
       method: idPersona ? 'PUT' : 'POST',
@@ -121,8 +121,11 @@ export const savePersona = async (formData: FormData) => {
     });
     return result;
   } catch (error) {
-    console.error('Error al obtener listado de generos:', error);
-    return null;
+    console.error('Error al guardar persona:', error);
+    return JSON.stringify(
+      {
+        "error" : error
+      });
   }
 }
 
@@ -152,6 +155,16 @@ export const fetchClasificacionesValiente = async () => {
     return result;
   } catch (error) {
     console.error('Error al obtener listado de clasificaciones del valiente:', error);
+    return null;
+  }
+}
+
+export const fetchGruposEtnicos = async () => {
+  try {
+    const result = await apiFetch('/grupos-etnicos');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener listado de grupos étnicos:', error);
     return null;
   }
 }
