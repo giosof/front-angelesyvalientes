@@ -40,6 +40,7 @@ const PeopleCardList = ({ peopleList }: { peopleList: any[] }) => {
       {/* Campo de búsqueda */}
       <Box mb={4}>
         <Input
+          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           placeholder="Buscar por nombre o identificación"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

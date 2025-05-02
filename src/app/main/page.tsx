@@ -4,7 +4,7 @@ import People from "./people/page";
 
 const Home: React.FC = () => {
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex h-screen flex-col">
       <People />
     </main>
   );
