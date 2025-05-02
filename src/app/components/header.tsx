@@ -5,6 +5,10 @@ import { Button, Menu } from "@chakra-ui/react";
 import { Portal } from "@chakra-ui/react/portal";
 import { useRouter } from 'next/navigation';
 import { FaPowerOff } from "react-icons/fa6";
+import { GiHeartWings } from "react-icons/gi";
+import { MdDisplaySettings } from "react-icons/md";
+import { FaChevronDown } from "react-icons/fa";
+import { TbReportAnalytics } from "react-icons/tb";
 
 const Header = () => {
     const router = useRouter()
@@ -21,7 +25,7 @@ const Header = () => {
           <Menu.Root>
             <Menu.Trigger asChild>
                 <Button variant="outline" size="sm" onClick={() => router.push('/main/people')}>
-                Ángeles y Valientes
+                <GiHeartWings size={28} /> Ángeles y Valientes
                 </Button>
             </Menu.Trigger>
             
@@ -29,7 +33,7 @@ const Header = () => {
           <Menu.Root>
             <Menu.Trigger asChild>
                 <Button variant="outline" size="sm">
-                Administración
+                <MdDisplaySettings /> Administración <FaChevronDown />
                 </Button>
             </Menu.Trigger>
             <Portal>
@@ -45,7 +49,7 @@ const Header = () => {
           <Menu.Root>
             <Menu.Trigger asChild>
                 <Button variant="outline" size="sm">
-                Reportes
+                <TbReportAnalytics /> Reportes <FaChevronDown />
                 </Button>
             </Menu.Trigger>
             <Portal>

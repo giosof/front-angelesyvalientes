@@ -4,10 +4,15 @@ import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPe
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { Button, Checkbox, Em, Field, Input } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsFillSave2Fill } from "react-icons/bs";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Text } from "@chakra-ui/layout";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import { es } from 'date-fns/locale/es';
+registerLocale('es', es)
+
+import "react-datepicker/dist/react-datepicker.css";
 
 interface FormValues {
   nmIdPersona: number
@@ -34,6 +39,7 @@ const PersonPage = () => {
   const [clasificacionesValiente, setClasificaciones] = useState<any>([]);
   const [gruposEtnicos, setGruposEtnicos] = useState<any>([]);
   const [persona, setPersona] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
   const { register, handleSubmit, setValue, getValues, formState: { errors, isSubmitting } } = useForm<FormValues>()
 
   useEffect(() => {
@@ -41,6 +47,9 @@ const PersonPage = () => {
       if (personId && personId !== "0") {
         const resPersona = await fetchPersonInfo(personId)
         setPersona(resPersona)
+        var result = new Date(resPersona.fechaNacimiento)
+        result.setDate(result.getDate() + 1);
+        setStartDate(result)
 
         Object.entries(resPersona).forEach(([key, value]) => {
           if (value && typeof value !== 'object') setValue(key as keyof FormValues, String(value))
@@ -108,13 +117,17 @@ const PersonPage = () => {
               </select>
             </div>
             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+              
               <Field.Root required>
                 <Field.Label className="block uppercase tracking-wide text-gray-700 text-xs font-bold">
                 Fecha de Nacimiento <Field.RequiredIndicator />
                 </Field.Label>
-                <Input {...register("fechaNacimiento")}
-                className="appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                type="text" />
+                <DatePicker 
+                  {...register("fechaNacimiento")}
+                  dateFormat="yyyy-MM-dd"
+                  locale="es"
+                  className="appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                  selected={startDate} onChange={(date) => setStartDate(date ? date : new Date())} />
               </Field.Root>
             </div>
             <div className="w-full md:w-1/3 px-3">
@@ -146,7 +159,7 @@ const PersonPage = () => {
             </div>
             <div className="w-full md:w-1/2 md:ps-6 pt-4 inline-block">
               <Checkbox.Root
-                defaultChecked={persona?.poblacionLgtbiq}
+                {...persona?.poblacionLgtbiq && 'defaultChecked'}
                 {...register("poblacionLgtbiq")}
                 className="flex items-center gap-2"
               >
