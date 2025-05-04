@@ -120,14 +120,14 @@ const PersonPage = () => {
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
                 Tipo de Identificación <Em className="text-red-500">*</Em>
               </label>
-              <select {...register("tipoIdentificacion")}
+              <Field.Root {...register("tipoIdentificacion")}
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
               >
                 {/* Renderizado dinámico de opciones */}
                 {tiposIdentificacion.map((tipo: any) => (
                       <option key={tipo.nmTipoIdentificacion} value={tipo.nmTipoIdentificacion.toString()}>{tipo.txTipoIdentificacion.toString()}</option>
                 ))}
-              </select>
+              </Field.Root>
             </div>
 
             {/* Campo: Número de identificación */}

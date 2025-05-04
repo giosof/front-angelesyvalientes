@@ -168,3 +168,36 @@ export const fetchGruposEtnicos = async () => {
     return null;
   }
 }
+
+export const uploadToGoogleDrive = async (idPersona: string, file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('idPersona', idPersona);
+
+    const response = await apiFetch('/uploadPdfToGoogleDrive', {
+      method: 'POST',
+      body: formData
+    }, 'json');
+
+    return response.urlPdf;
+  } catch (error) {
+    console.error('Error al subir el archivo a Google Drive:', error);
+    return null;
+  }
+};
+
+export const saveDocumentacion = async (documentacionData: any) => {
+  try {
+    const response = await apiFetch('/api/documentaciones', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(documentacionData)
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al guardar la documentación:', error);
+    return null;
+  }
+};
