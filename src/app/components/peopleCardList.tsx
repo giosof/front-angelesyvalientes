@@ -57,7 +57,7 @@ const PeopleCardList = ({ peopleList }: { peopleList: any[] }) => {
             p={1}
             shadow="md"
             _hover={{ shadow: "lg", transform: "scale(1.01)", transition: "0.2s" }}
-            onClick={() => router.push(`/main/people/${person.nmIdPersona}`)}
+            onClick={() => router.push(`/main/people/${person.id}`)}
           >
             <Card.Header>
               <Heading className="text-lg font-semibold text-gray-600 dark:text-stone-700">

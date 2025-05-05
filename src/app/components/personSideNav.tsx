@@ -144,26 +144,26 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
           <p className="hidden md:block">Estudios</p>
         </Link>
 
-        <a
-          href=""
+        <Link
+          href={`/main/people/${personId}/valiente/clinicos`}
           className="flex h-[48px] w-full items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:justify-start"
         >
           <p className="hidden md:block">Informes Clínicos</p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href={`/main/people/${personId}/valiente/documentacion`}
           className="flex h-[48px] w-full items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:justify-start"
         >
           <p className="hidden md:block">Documentación</p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href=""
           className="flex h-[48px] w-full items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:justify-start"
         >
           <p className="hidden md:block">Programas</p>
-        </a>
+        </Link>
 
         <HStack gap="8">
           <Text className="text-md font-semibold text-gray-600 dark:text-stone-700">Ángel</Text>
