@@ -12,11 +12,9 @@ export const apiFetch = async (
       const token = sessionStorage.getItem('token');
   
       const headers = {
-        'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers || {}),
       };
-  
       const response = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
         headers,
@@ -169,16 +167,46 @@ export const fetchGruposEtnicos = async () => {
   }
 }
 
-export const uploadToGoogleDrive = async (idPersona: string, file: File) => {
+export const uploadToGoogleDrive = async (idPersona: string, file: File, documentType: string) => {
   try {
+    if (!(file instanceof File)) {
+      console.error('El archivo proporcionado no es un tipo File válido');
+      return null;
+    }
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('pdf', file);
     formData.append('idPersona', idPersona);
+    formData.append('tipoDocumentacion', documentType);
 
     const response = await apiFetch('/uploadPdfToGoogleDrive', {
       method: 'POST',
-      body: formData
-    }, 'json');
+      body: formData,
+    });
+
+    return response.urlPdf;
+  } catch (error) {
+    console.error('Error al subir el archivo a Google Drive:', error);
+    return null;
+  }
+};
+
+export const uploadInformeClinicoPdf = async (idInformeClinico: number, file: File, idPersona: string ) => {
+  try {
+    if (!(file instanceof File)) {
+      console.error('El archivo proporcionado no es un tipo File válido');
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append('pdf', file); 
+    formData.append('idInformeClinico', idInformeClinico.toString());
+    formData.append('idPersona', idPersona);
+
+    const response = await apiFetch('/uploadInformeClinicoPdf', {
+      method: 'POST',
+      body: formData,
+    });
 
     return response.urlPdf;
   } catch (error) {
@@ -189,7 +217,7 @@ export const uploadToGoogleDrive = async (idPersona: string, file: File) => {
 
 export const saveDocumentacion = async (documentacionData: any) => {
   try {
-    const response = await apiFetch('/api/documentaciones', {
+    const response = await apiFetch('/documentaciones', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(documentacionData)
@@ -201,3 +229,64 @@ export const saveDocumentacion = async (documentacionData: any) => {
     return null;
   }
 };
+
+export const saveEducacion = async (educacionData: any) => {
+  try {
+    const response = await apiFetch('/educaciones', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(educacionData)
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al guardar la educación:', error);
+    return null;
+  }
+};
+
+export const fetchEducacionesByPersona = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/educaciones/persona/${idPersona}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las educaciones de la persona:', error);
+    return null;
+  }
+};
+
+export const fetchDocumentacionesByPersona = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/documentaciones/persona/${idPersona}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las documentaciones de la persona:', error);
+    return null;
+  }
+};
+
+export const saveInformesClinicos = async (clinicoData: any) => {
+  try {
+    const response = await apiFetch('/informesclinicos', {
+      method: 'POST',
+      body: JSON.stringify(clinicoData),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al guardar la documentación:', error);
+    return null;
+  }
+};
+
+export const fetchClinicosByPersona = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/informesclinicos/persona/${idPersona}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las educaciones de la persona:', error);
+    return null;
+  }
+};
+  
