@@ -1,6 +1,7 @@
 //const BASE_URL = 'https://api-angelesyvalientes-latest.onrender.com/api';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
+
 type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer';
 
 export const apiFetch = async (
@@ -20,26 +21,38 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status === 401) {
+      if (response.status === 402) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
       }
   
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        let errorText = '';
+        try {
+          errorText = await response.text(); 
+        } catch (e) {
+          errorText = `Error ${response.status}: ${response.statusText}`; 
+        }
+        throw new Error(errorText); 
       }
   
+      let data: any; 
       switch (responseType) {
         case 'text':
-          return await response.text();
+          data = await response.text();
+          break;
         case 'blob':
-          return await response.blob();
+          data = await response.blob();
+          break;
         case 'arrayBuffer':
-          return await response.arrayBuffer();
+          data = await response.arrayBuffer();
+          break;
         default:
-          return await response.json();
+          data = await response.json();
+          break;
       }
+      return data;
     } catch (error) {
       console.error('API Error:', error);
       throw error;
@@ -167,60 +180,16 @@ export const fetchGruposEtnicos = async () => {
   }
 }
 
-export const uploadToGoogleDrive = async (idPersona: string, file: File, documentType: string) => {
-  try {
-    if (!(file instanceof File)) {
-      console.error('El archivo proporcionado no es un tipo File válido');
-      return null;
-    }
 
+export const saveDocumentacion = async (documentacionData: any, file: File) => {
+  try {
     const formData = new FormData();
-    formData.append('pdf', file);
-    formData.append('idPersona', idPersona);
-    formData.append('tipoDocumentacion', documentType);
+    formData.append('archivoInforme', file, file.name);
+    formData.append('documentacion', new Blob([JSON.stringify(documentacionData)], { type: 'application/json' }));
 
-    const response = await apiFetch('/uploadPdfToGoogleDrive', {
-      method: 'POST',
-      body: formData,
-    });
-
-    return response.urlPdf;
-  } catch (error) {
-    console.error('Error al subir el archivo a Google Drive:', error);
-    return null;
-  }
-};
-
-export const uploadInformeClinicoPdf = async (idInformeClinico: number, file: File, idPersona: string ) => {
-  try {
-    if (!(file instanceof File)) {
-      console.error('El archivo proporcionado no es un tipo File válido');
-      return null;
-    }
-
-    const formData = new FormData();
-    formData.append('pdf', file); 
-    formData.append('idInformeClinico', idInformeClinico.toString());
-    formData.append('idPersona', idPersona);
-
-    const response = await apiFetch('/uploadInformeClinicoPdf', {
-      method: 'POST',
-      body: formData,
-    });
-
-    return response.urlPdf;
-  } catch (error) {
-    console.error('Error al subir el archivo a Google Drive:', error);
-    return null;
-  }
-};
-
-export const saveDocumentacion = async (documentacionData: any) => {
-  try {
     const response = await apiFetch('/documentaciones', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(documentacionData)
+      body: formData
     });
 
     return response;
@@ -265,17 +234,24 @@ export const fetchDocumentacionesByPersona = async (idPersona: string) => {
   }
 };
 
-export const saveInformesClinicos = async (clinicoData: any) => {
+export const saveInformesClinicos = async (clinicoData: any, file: File) => {
   try {
+    if (!(file instanceof File)) {
+      console.error('El archivo proporcionado no es un tipo File válido');
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append('archivoInforme', file, file.name);
+    formData.append('informeClinico', new Blob([JSON.stringify(clinicoData)], { type: 'application/json' }));
+
     const response = await apiFetch('/informesclinicos', {
       method: 'POST',
-      body: JSON.stringify(clinicoData),
-      headers: { 'Content-Type': 'application/json' }
+      body: formData,
     });
 
-    return response;
+    return response.ok;
   } catch (error) {
-    console.error('Error al guardar la documentación:', error);
     return null;
   }
 };
@@ -289,4 +265,18 @@ export const fetchClinicosByPersona = async (idPersona: string) => {
     return null;
   }
 };
-  
+
+export const saveVivienda = async (viviendaData: any) => {
+  try {
+    const response = await apiFetch('/viviendas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(viviendaData)
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al guardar la vivienda:', error);
+    return null;
+  }
+};

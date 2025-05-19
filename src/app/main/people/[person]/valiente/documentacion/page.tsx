@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { es } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { uploadToGoogleDrive, saveDocumentacion, fetchDocumentacionesByPersona } from "@/app/helpers/api";
+import { saveDocumentacion, fetchDocumentacionesByPersona } from "@/app/helpers/api";
 import { useParams } from "next/navigation";
 import { Box, Input } from '@chakra-ui/react';
 
@@ -37,37 +37,42 @@ const DocumentacionForm = () => {
     )
   })
 
+  const fetchDocumentaciones = async () => {
+    const result = await fetchDocumentacionesByPersona(personId);
+    if (result) {
+      setDocumentos(result);
+    } 
+  };
+
   const onSubmit = async (data: any) => {
       if (!file) {
         setMessage('Archivo o tipo de documento no seleccionado');
         return;
       }
-      // Subir el archivo a Google Drive
-      const urlPdf = await uploadToGoogleDrive(personId, file, data.tipoDocumentacion);
     
-
       // Preparar datos de la documentación
       const documentacionData = {
         persona: {
-          id: personId,
+          nmIdPersona: personId,
         },
         tipoDocumentacion: data.tipoDocumentacion,
-        urlPdf: urlPdf,
         fecha: date.toISOString().split('T')[0]
       };
 
       // Guardar la documentación
-      const result = await saveDocumentacion(documentacionData);
-      console.log('Resultado del guardado:', result);
-      if (result && result.success) {
+      const result = await saveDocumentacion(documentacionData, file);
+  
+      if (result) {
         setMessage('Documentación guardada exitosamente');
         reset();
         setFile(null);
+        fetchDocumentaciones();
         return;
       } else {
+        setMessage('Error al guardar la documentación');
         reset();
         setFile(null);
-        setMessage('Documentación guardada exitosamente');
+        fetchDocumentaciones();
         return;
       }
   };
