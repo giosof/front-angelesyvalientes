@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { es } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { uploadInformeClinicoPdf, saveInformesClinicos, fetchClinicosByPersona } from "@/app/helpers/api";
+import { saveInformesClinicos, fetchClinicosByPersona } from "@/app/helpers/api";
 import { useParams } from "next/navigation";
 import { Box, Input } from '@chakra-ui/react';
 
@@ -25,13 +25,10 @@ const ClinicosForm = () => {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredInformesClinicos = informesClinicos.filter((doc) => {
-    // Si no hay texto ingresado, retornar todos
     if (!searchTerm) return true
 
-    // Concatenar nombre completo
     const docTypeInforme = `${doc.tipoInforme}`
 
-    // Convertir ambos valores a minúscula y buscar coincidencias
     return (
       docTypeInforme.toLowerCase().includes(searchTerm.toLowerCase()) 
     )
@@ -53,7 +50,7 @@ const ClinicosForm = () => {
 
       const informeClinicoData = {
         persona: {
-          id: personId,
+          nmIdPersona: personId,
         },
         tipoInforme: data.tipoInforme,
         profesional: data.profesional,
@@ -61,8 +58,8 @@ const ClinicosForm = () => {
       };
 
       // Guardar informe clinico
-      const result = await saveInformesClinicos(informeClinicoData);
-      if (result) {
+      const result = await saveInformesClinicos(informeClinicoData, file);
+      if (!result) {
         setMessage('Informe clinico guardado exitosamente');
         reset();
         setFile(null);
@@ -72,13 +69,12 @@ const ClinicosForm = () => {
         setMessage('Error al guardar el informe clinico');
       }
       
-      const urlPdf = await uploadInformeClinicoPdf(result.idInformeClinico, file, personId);
-      if (!urlPdf) {
-        console.log('Error al subir el archivo');
-        return;
-      }
     } catch (error) {
-      console.log('Error en el proceso de guardar documentación');
+      console.log('Error en el proceso de guardar los informes clinicos');
+      reset();
+      setFile(null);
+      fetchInformesClinicos(); // Refrescar la lista después de guardar
+      return;
     }
   };
 
