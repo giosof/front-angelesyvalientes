@@ -173,6 +173,13 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
             <Switch.Label />
           </Switch.Root>
         </HStack>
+
+        <Link
+          href={`/main/people/${personId}/angel/donaciones`}
+          className="flex h-[48px] w-full items-center justify-center gap-2 rounded-md bg_amber-50 p-3 text-m font-bold hover:bg-red-700 hover:text-white md:justify-start"
+        >
+          <p className="hidden md:block">Donaciones</p>
+        </Link>
       </div>
     </div>
   );
