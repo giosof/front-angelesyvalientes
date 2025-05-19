@@ -21,7 +21,7 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status === 402) {
+      if (response.status == 401) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
