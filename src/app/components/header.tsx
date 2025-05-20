@@ -41,7 +41,6 @@ const Header = () => {
                 <Menu.Content>
                     <Menu.Item value="new-txt">Programas</Menu.Item>
                     <Menu.Item value="new-file">Usuarios</Menu.Item>
-                    <Menu.Item value="new-file">Parámetros</Menu.Item>
                 </Menu.Content>
                 </Menu.Positioner>
             </Portal>

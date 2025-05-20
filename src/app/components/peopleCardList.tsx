@@ -51,7 +51,7 @@ const PeopleCardList = ({ peopleList }: { peopleList: any[] }) => {
       <Stack>
         {filteredPeople.map((person: any) => (
           <Card.Root 
-            key={person.nmIdPersona}
+            key={person.id}
             className="bg-white dark:bg-amber-200 border border-transparent rounded-2xl shadow-md hover:shadow-xl transition-all"
             borderRadius="2xl"
             p={1}
