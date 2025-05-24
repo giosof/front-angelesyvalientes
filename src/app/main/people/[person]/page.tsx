@@ -82,13 +82,13 @@ const PersonPage = () => {
     const result = await savePersona(formData)
 
     // Mostrar notificación según la respuesta del servidor
-    if (result && result.nmIdPersona) {
+    if (result && result.id) {
       toaster.create({
         title: "Persona guardada",
         description: "La información fue almacenada exitosamente",
         type: "success"
       })
-      redirect('/main/people/' + result.nmIdPersona)
+      redirect('/main/people/' + result.id)
     } else {
       toaster.create({
         title: "Error",
