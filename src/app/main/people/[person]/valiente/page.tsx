@@ -47,9 +47,17 @@ const PersonPage = () => {
       if (personId && personId !== "0") {
         const resPersona = await fetchPersonInfo(personId)
         setPersona(resPersona)
-        var result = new Date(resPersona.fechaNacimiento)
-        result.setDate(result.getDate() + 1);
-        setStartDate(result)
+        if (resPersona.fechaNacimiento) {
+          const fecha = new Date(resPersona.fechaNacimiento);
+          if (!isNaN(fecha.getTime())) {
+            fecha.setDate(fecha.getDate() + 1);
+            setStartDate(fecha);
+          } else {
+            setStartDate(undefined);
+          }
+        } else {
+          setStartDate(undefined);
+        }
 
         Object.entries(resPersona).forEach(([key, value]) => {
           if (value && typeof value !== 'object') setValue(key as keyof FormValues, String(value))

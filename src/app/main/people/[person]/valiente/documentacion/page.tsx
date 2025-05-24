@@ -25,13 +25,9 @@ const DocumentacionForm = () => {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredDocumentos = documentos.filter((doc) => {
-    // Si no hay texto ingresado, retornar todos
+  
     if (!searchTerm) return true
-
-    // Concatenar nombre completo
     const docType = `${doc.tipoDocumentacion}`
-
-    // Convertir ambos valores a minúscula y buscar coincidencias
     return (
       docType.toLowerCase().includes(searchTerm.toLowerCase()) 
     )
@@ -50,7 +46,6 @@ const DocumentacionForm = () => {
         return;
       }
     
-      // Preparar datos de la documentación
       const documentacionData = {
         persona: {
           nmIdPersona: personId,
@@ -59,7 +54,6 @@ const DocumentacionForm = () => {
         fecha: date.toISOString().split('T')[0]
       };
 
-      // Guardar la documentación
       const result = await saveDocumentacion(documentacionData, file);
   
       if (result) {

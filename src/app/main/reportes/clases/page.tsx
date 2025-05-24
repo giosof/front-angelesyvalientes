@@ -111,7 +111,6 @@ const ReporteClasesPage: React.FC = () => {
           <thead>
             <tr>
               <th className="py-3 px-4 border border-gray-200 bg-red-100 text-xs font-medium text-gray-700 uppercase tracking-wider text-left">Nombre</th>
-              <th className="py-3 px-4 border border-gray-200 bg-red-100 text-xs font-medium text-gray-700 uppercase tracking-wider text-left">Identificación</th>
               {clasesHeaders.map((clase) => (
                 <th key={clase.codigo} className="py-3 px-4 border border-gray-200 bg-red-100 text-xs font-medium text-red-700 uppercase tracking-wider text-center">
                   Clase {clase.codigo}
@@ -123,7 +122,6 @@ const ReporteClasesPage: React.FC = () => {
             {filteredReporte.map((valiente, idx) => (
               <tr key={valiente.idValiente} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}>
                 <td className="py-2 px-4 border border-gray-200 text-gray-700 text-left">{getNombreCompleto(valiente)}</td>
-                <td className="py-2 px-4 border border-gray-200 text-gray-700 text-left">{getIdentificador(valiente)}</td>
                 {clasesHeaders.map((clase) => {
                   const ficha = valiente.fichasFinalizadas.find(f => f.codigoFicha === clase.codigo);
                   return (

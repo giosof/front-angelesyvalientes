@@ -15,13 +15,8 @@ const EstudiosForm = () => {
   const [message, setMessage] = useState<string | null>(null)
 
   const filteredEducaciones = educaciones.filter((edu) => {
-    // Si no hay texto ingresado, retornar todos
     if (!searchTerm) return true
-
-    // Concatenar nombre completo
     const fullName = `${edu.institucion} ${edu.nivel}`
-
-    // Convertir ambos valores a minúscula y buscar coincidencias
     return (
       fullName.toLowerCase().includes(searchTerm.toLowerCase()) 
     )
