@@ -21,7 +21,7 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status == 401) {
+      if (response.status == 402) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
@@ -279,4 +279,144 @@ export const saveVivienda = async (viviendaData: any) => {
     console.error('Error al guardar la vivienda:', error);
     return null;
   }
+};
+
+export const fetchProgramas = async () => {
+  try {
+    const result = await apiFetch('/programas');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener la lista de programas:', error);
+    return null;
+  }
+}
+
+export const saveMatriculaValiente = async (idPersona: string, idPrograma: string) => {
+  try {
+    const response = await apiFetch(`/fichas-por-valiente/crear?idPersona=${idPersona}&idPrograma=${idPrograma}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al guardar la matrícula del valiente:', error);
+    return null;
+  }
+};
+
+export const savePrograma = async (programaData: any) => {
+  try {
+    const response = await apiFetch('/programas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(programaData)
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al guardar el programa:', error);
+    return null;
+  }
+};
+
+export const saveFicha = async (fichaData: any, archivo: File) => {
+    try {
+        console.log("fichaData", fichaData);
+        const formData = new FormData();
+        formData.append('archivoRecurso', archivo);
+        formData.append('ficha', new Blob([JSON.stringify(fichaData)], { type: 'application/json' }));
+
+        const response = await apiFetch('/fichas', {
+            method: 'POST',
+            body: formData
+        });
+        return response;
+    } catch (error) {
+        console.error('Error al guardar la ficha:', error);
+        return null;
+    }
+};
+
+export const fetchProgramasByValiente = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/fichas-por-valiente/${idPersona}/programas`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener los programas del valiente:', error);
+    return null;
+  }
+};
+
+export const fetchFichasByProgramaAndPersona = async (idPrograma: string, idPersona: string) => {
+  try {
+    const result = await apiFetch(`/fichas-por-valiente/programas/${idPrograma}/personas/${idPersona}/fichas`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las fichas del programa:', error);
+    return null;
+  }
+};
+
+export const completarClase = async (idFicha: string, idValiente: string, fechaFinalizacion: string) => {
+  try {
+    const response = await apiFetch(`/fichas-por-valiente/${idFicha}/${idValiente}?fechaFinalizacion=${fechaFinalizacion}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al completar la clase:', error);
+    return null;
+  }
+};
+
+export const fetchFichasByPrograma = async (idPrograma: string) => {
+  try {
+    const result = await apiFetch(`/fichas/por-programa/${idPrograma}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las fichas del programa:', error);
+    return null;
+  }
+};
+
+export const fetchReporteClasesPorPrograma = async (idPrograma: string) => {
+  try {
+    const result = await apiFetch(`/fichas-por-valiente/valientes/programa/${idPrograma}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener el reporte de clases:', error);
+    return null;
+  }
+};
+
+export const saveDonacion = async (personId: string, donacion: {
+    idDonacion: number;
+    tipoDonacion: {
+        id: number;
+        tipoDonacion: string;
+    };
+    fecha: string;
+    observacion: string;
+}) => {
+    try {
+        const response = await apiFetch(`/donaciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...donacion,
+                idPersona: personId
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al guardar la donación');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
 };
