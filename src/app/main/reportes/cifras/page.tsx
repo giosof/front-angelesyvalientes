@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   SimpleGrid,
@@ -9,9 +9,12 @@ import {
   Heading,
   ListItem,
   Container,
+  Spinner,
+  Center,
 } from '@chakra-ui/react';
 import { Heart } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { fetchValientesBirthdays, fetchValientesByClasificacion } from '@/app/helpers/api';
 
 // Sample data for the chart
 const chartData = [
@@ -25,16 +28,49 @@ const chartData = [
   { month: 'Nov', Lectura: 185, Matemáticas: 95, Braille: 94 },
 ];
 
-const birthdays = [
-  { name: 'Cristobal Arenas', date: '23 Marzo' },
-  { name: 'Anderson Plata', date: '27 Marzo' },
-  { name: 'Alejandra Vidal', date: '2 Abril' },
-  { name: 'Alejandro Barrera', date: '13 Junio' },
-  { name: 'Valentina Arias', date: '7 Septiembre' },
-  { name: 'Luis Alberto Perez', date: '18 Septiembre' },
-];
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(date);
+  return `${day} ${month.charAt(0).toUpperCase() + month.slice(1)}`;
+};
 
 export default function CifrasPage() {
+  const [birthdays, setBirthdays] = useState<Array<{
+    nombres: string;
+    apellidos: string;
+    fechaNacimiento: string;
+  }> | null>(null);
+  const [childrenCount, setChildrenCount] = useState<number | null>(null);
+  const [adultsCount, setAdultsCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [birthdaysData, childrenData, adultsData] = await Promise.all([
+          fetchValientesBirthdays(),
+          fetchValientesByClasificacion(1),
+          fetchValientesByClasificacion(2)
+        ]);
+
+        if (birthdaysData) {
+          setBirthdays(birthdaysData);
+        }
+        
+        setChildrenCount(childrenData);
+        setAdultsCount(adultsData);
+      } catch (err) {
+        setError('Error al cargar los datos');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
   return (
     <Container maxW="7xl" p={6}>
       <SimpleGrid columns={{ base: 1, md: 2 }} gap={6} mb={6}>
@@ -46,16 +82,36 @@ export default function CifrasPage() {
               <Text color="red.500" fontSize="xl">Valientes</Text>
               <SimpleGrid columns={3} gap={8} w="full">
                 <Stack>
-                  <Text fontSize="4xl" fontWeight="bold">56</Text>
-                  <Text>Niños</Text>
+                  {loading ? (
+                    <Center py={2}>
+                      <Spinner size="lg" />
+                    </Center>
+                  ) : (
+                    <>
+                      <Text fontSize="4xl" fontWeight="bold" color="black">
+                        {childrenCount ?? '-'}
+                      </Text>
+                      <Text color="black">Niños</Text>
+                    </>
+                  )}
                 </Stack>
                 <Stack>
-                  <Text fontSize="4xl" fontWeight="bold">27</Text>
-                  <Text>Adultos</Text>
+                  {loading ? (
+                    <Center py={2}>
+                      <Spinner size="lg" />
+                    </Center>
+                  ) : (
+                    <>
+                      <Text fontSize="4xl" fontWeight="bold" color="black">
+                        {adultsCount ?? '-'}
+                      </Text>
+                      <Text color="black">Adultos</Text>
+                    </>
+                  )}
                 </Stack>
                 <Stack>
-                  <Text fontSize="4xl" fontWeight="bold">17</Text>
-                  <Text>Familias</Text>
+                  <Text fontSize="4xl" fontWeight="bold" color="black">17</Text>
+                  <Text color="black">Familias</Text>
                 </Stack>
               </SimpleGrid>
             </Stack>
@@ -69,8 +125,8 @@ export default function CifrasPage() {
               <img src="/wings-icon.png" alt="Wings" width={32} height={32} />
             </Box>
             <Stack gap={4} flex={1}>
-              <Text color="red.500" fontSize="xl">Fueron Valientes, Ahora Ángeles</Text>
-              <Text fontSize="4xl" fontWeight="bold">32</Text>
+              <Text color="red.500" fontSize="xl">Fueron Valientes Ahora Ángeles</Text>
+              <Text fontSize="4xl" fontWeight="bold" color="black">32</Text>
             </Stack>
           </Stack>
         </Box>
@@ -84,16 +140,26 @@ export default function CifrasPage() {
               <Text fontSize="xl">🎂</Text>
               <Heading size="md">Cumpleaños</Heading>
             </Stack>
-            <Stack gap={3} w="full">
-              {birthdays.map((birthday, index) => (
-                <Box key={index} py={2} borderBottom="1px" borderColor="gray.200">
-                  <Stack direction="row" justify="space-between">
-                    <Text>{birthday.name}</Text>
-                    <Text color="gray.600">{birthday.date}</Text>
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+            {loading ? (
+              <Center py={4}>
+                <Spinner />
+              </Center>
+            ) : error ? (
+              <Text color="red.500">{error}</Text>
+            ) : birthdays && birthdays.length > 0 ? (
+              <Stack gap={3} w="full">
+                {birthdays.map((birthday, index) => (
+                  <Box key={index} py={2} borderBottom="1px" borderColor="gray.200">
+                    <Stack direction="row" justify="space-between">
+                      <Text color="black">{`${birthday.nombres} ${birthday.apellidos}`}</Text>
+                      <Text color="gray.600">{formatDate(birthday.fechaNacimiento)}</Text>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <Text color="gray.500">No hay cumpleaños próximos</Text>
+            )}
           </Stack>
         </Box>
 
