@@ -55,7 +55,7 @@ const Header = () => {
                 <Menu.Positioner>
                 <Menu.Content>
                     <Menu.Item value="new-txt" onClick={() => router.push('/main/reportes/clases')}>Reporte de Clases</Menu.Item>
-                    <Menu.Item value="new-file">Estadísticas</Menu.Item>
+                    <Menu.Item value="new-file" onClick={() => router.push('/main/reportes/cifras')}>Estadísticas</Menu.Item>
                 </Menu.Content>
                 </Menu.Positioner>
             </Portal>
