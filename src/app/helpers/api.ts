@@ -24,12 +24,18 @@ export const apiFetch = async (
       if (response.status == 402) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
-        // Redirigir al usuario a la página de inicio de sesión
-        window.location.href = '/';
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
-      
       }
-
+  
+      if (!response.ok) {
+        let errorText = '';
+        try {
+          errorText = await response.text(); 
+        } catch (e) {
+          errorText = `Error ${response.status}: ${response.statusText}`; 
+        }
+        throw new Error(errorText); 
+      }
   
       let data: any; 
       switch (responseType) {
@@ -383,106 +389,54 @@ export const fetchReporteClasesPorPrograma = async (idPrograma: string) => {
   }
 };
 
-export const saveDonacion = async (donacion: any) => {
+export const saveDonacion = async (personId: string, donacion: {
+    idDonacion: number;
+    tipoDonacion: {
+        id: number;
+        tipoDonacion: string;
+    };
+    fecha: string;
+    observacion: string;
+}) => {
     try {
         const response = await apiFetch(`/donaciones`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body:  JSON.stringify(donacion)
+            body: JSON.stringify({
+                ...donacion,
+                idPersona: personId
+            }),
         });
-        return  response;
+
+        if (!response.ok) {
+            throw new Error('Error al guardar la donación');
+        }
+
+        return await response.json();
     } catch (error) {
         console.error('Error:', error);
         throw error;
     }
 };
 
-export const saveAngel = async (angel: any) => {
+export const fetchValientesBirthdays = async () => {
   try {
-    const response = await apiFetch(`/angeles`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(angel)
-    });
-    return response;
-  } catch (error) {
-    console.error('Error al guardar el angel:', error);
-    return null;
-  }
-}
-
-export const fetchTiposDonacion = async () => {
-  try {
-    const result = await apiFetch('/tipos-donacion');
+    const result = await apiFetch('/valientes/cumpleanos');
     return result;
   } catch (error) {
-    console.error('Error al obtener los tipos de donación:', error);
+    console.error('Error al obtener los cumpleaños:', error);
     return null;
   }
 };
 
-export const fetchDonacionesByPersona = async (idPersona: string) => {
+export const fetchValientesByClasificacion = async (clasificacion: number) => {
   try {
-    const result = await apiFetch(`/donaciones/persona/${idPersona}`);
+    const result = await apiFetch(`/valientes/count-by-clasificacion/${clasificacion}`);
     return result;
   } catch (error) {
-    console.error('Error al obtener las donaciones de la persona:', error);
-    return null;
-  }
-};
-
-export const saveFamiliar = async (familiarData: any) => {
-  try {
-    const response = await apiFetch('/familiares', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(familiarData)
-    });
-    return response;
-  } catch (error) {
-    console.error('Error al guardar el familiar:', error);
-    return null;
-  }
-};
-
-export const fetchFamiliaresByVivienda = async (idVivienda: number) => {
-  try {
-    const result = await apiFetch(`/familiares/vivienda/${idVivienda}`);
-    return result;
-  } catch (error) {
-    console.error('Error al obtener los familiares de la vivienda:', error);
-    return null;
-  }
-};
-
-export const asignarVivienda = async (idPersona: string, idVivienda: number) => {
-  try {
-    const response = await apiFetch(`/valientes/${idPersona}/asignarVivienda/${idVivienda}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    return response;
-  } catch (error) {
-    console.error('Error al asignar la vivienda:', error);
-    return null;
-  }
-};
-
-export const updateProfilePictureUrl = async (idPersona: string, file: File) => {
-  try {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('idPersona', idPersona);
-
-    const response = await apiFetch(`/uploadToGoogleDrive`, {
-      method: 'POST',
-      body: formData
-    });
-    return response;
-  } catch (error) {
-    console.error('Error al actualizar la foto de perfil:', error);
+    console.error('Error al obtener el conteo por clasificación:', error);
     return null;
   }
 };
