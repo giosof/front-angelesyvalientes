@@ -64,7 +64,12 @@ const Header = () => {
 
         {/* Íconos de ajustes */}
         <div className="flex space-x-4">
-          <button>
+          <button
+            onClick={() => {
+              sessionStorage.removeItem('token');
+              router.push('/');
+            }}
+          >
             <FaPowerOff className="text-white text-xl" />
           </button>
         </div>

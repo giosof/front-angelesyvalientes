@@ -63,7 +63,7 @@ const ClinicosForm = () => {
         setMessage('Informe clinico guardado exitosamente');
         reset();
         setFile(null);
-        fetchInformesClinicos(); // Refrescar la lista después de guardar
+        fetchInformesClinicos(); 
         return;
       } else {
         setMessage('Error al guardar el informe clinico');
@@ -73,13 +73,13 @@ const ClinicosForm = () => {
       console.log('Error en el proceso de guardar los informes clinicos');
       reset();
       setFile(null);
-      fetchInformesClinicos(); // Refrescar la lista después de guardar
+      fetchInformesClinicos(); 
       return;
     }
   };
 
   const handleSearch = () => {
-    fetchInformesClinicos(); // Refrescar la lista cuando se realiza una búsqueda
+    fetchInformesClinicos(); 
   };
 
   useEffect(() => {
