@@ -421,6 +421,94 @@ export const saveDonacion = async (personId: string, donacion: {
     }
 };
 
+export const saveAngel = async (angel: any) => {
+  try {
+    const response = await apiFetch(`/angeles`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(angel)
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al guardar el angel:', error);
+    return null;
+  }
+}
+
+export const fetchTiposDonacion = async () => {
+  try {
+    const result = await apiFetch('/tipos-donacion');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener los tipos de donación:', error);
+    return null;
+  }
+};
+
+export const fetchDonacionesByPersona = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/donaciones/persona/${idPersona}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las donaciones de la persona:', error);
+    return null;
+  }
+};
+
+export const saveFamiliar = async (familiarData: any) => {
+  try {
+    const response = await apiFetch('/familiares', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(familiarData)
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al guardar el familiar:', error);
+    return null;
+  }
+};
+
+export const fetchFamiliaresByVivienda = async (idVivienda: number) => {
+  try {
+    const result = await apiFetch(`/familiares/vivienda/${idVivienda}`);
+    return result;
+  } catch (error) {
+    console.error('Error al obtener los familiares de la vivienda:', error);
+    return null;
+  }
+};
+
+export const asignarVivienda = async (idPersona: string, idVivienda: number) => {
+  try {
+    const response = await apiFetch(`/valientes/${idPersona}/asignarVivienda/${idVivienda}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al asignar la vivienda:', error);
+    return null;
+  }
+};
+
+export const updateProfilePictureUrl = async (idPersona: string, file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('idPersona', idPersona);
+
+    const response = await apiFetch(`/uploadToGoogleDrive`, {
+      method: 'POST',
+      body: formData
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al actualizar la foto de perfil:', error);
+    return null;
+  }
+};
+
 export const fetchValientesBirthdays = async () => {
   try {
     const result = await apiFetch('/valientes/cumpleanos');
@@ -438,5 +526,47 @@ export const fetchValientesByClasificacion = async (clasificacion: number) => {
   } catch (error) {
     console.error('Error al obtener el conteo por clasificación:', error);
     return null;
+  }
+};
+
+export const saveValiente = async (formData: FormData) => {
+  try {
+    const valienteData = {
+      idPersona: parseInt(formData.get('nmIdPersona') as string),
+      fechaNacimiento: formData.get('fechaNacimiento'),
+      grupoEtnicoId: parseInt(formData.get('grupoEtnico') as string),
+      clasificacionValienteId: parseInt(formData.get('clasificacionValiente') as string),
+      tallaCalzado: formData.get('tallaCalzado'),
+      tallaCamisa: formData.get('tallaCamisa'),
+      tallaPantalon: formData.get('tallaPantalon'),
+      nombreResponsable: formData.get('nombreResponsable'),
+      parentescoResponsable: formData.get('parentescoResponsable'),
+      telefonoResponsable: formData.get('telefonoResponsable'),
+      urlGaleria: formData.get('urlGaleria'),
+      poblacionLgtbiq: formData.get('poblacionLgtbiq') === 'true',
+      activo: true
+    };
+
+    // Validar que los campos requeridos no sean null o undefined
+    if (!valienteData.idPersona) {
+      throw new Error('El ID de persona es requerido');
+    }
+
+    if (!valienteData.fechaNacimiento) {
+      throw new Error('La fecha de nacimiento es requerida');
+    }
+
+    const response = await apiFetch('/valientes/crear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(valienteData)
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al guardar el valiente:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Error al guardar el valiente'
+    };
   }
 };

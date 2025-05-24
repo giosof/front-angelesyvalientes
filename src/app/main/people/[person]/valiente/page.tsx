@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona } from "@/app/helpers/api";
+import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona, saveValiente } from "@/app/helpers/api";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { Button, Checkbox, Em, Field, Input } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
@@ -80,9 +80,24 @@ const PersonPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = (async (data: FormValues) => {
     const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => formData.append(key, value))
+    
+    // Asegurar que el ID de persona se envíe correctamente
+    formData.append('nmIdPersona', personId)
+    
+    // Asegurar que la fecha se envíe en el formato correcto
+    if (startDate) {
+      const formattedDate = startDate.toISOString().split('T')[0]
+      formData.append('fechaNacimiento', formattedDate)
+    }
 
-    const result = await savePersona(formData)
+    // Agregar el resto de los campos
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== 'nmIdPersona' && key !== 'fechaNacimiento') {
+        formData.append(key, value)
+      }
+    })
+
+    const result = await saveValiente(formData)
 
     if (result && result.nmIdPersona) {
       toaster.create({
@@ -93,7 +108,7 @@ const PersonPage = () => {
     } else {
       toaster.create({
         title: "Error",
-        description: result.error || "No fue posible guardar la persona.",
+        description: result?.error || "No fue posible guardar la persona.",
         type: "error"
       })
     }

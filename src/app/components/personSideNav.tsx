@@ -47,9 +47,38 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
             alt="Foto Persona"
             src={`https://lh3.googleusercontent.com/d/${persona.urlFoto}`}
           />
+
+          
+          <div className="flex flex-col md:items-center ">
+            {/* Dialog para editar foto */}
+            <Dialog.Root placement="center">
+              <Dialog.Trigger asChild>
+                <Button variant="outline" size="sm" className="mb-2 ms-6 md:self-start">
+                  Editar Foto
+                </Button>
+              </Dialog.Trigger>
+              <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                  <Dialog.Content>
+                    <Dialog.Body pt="4">
+                      <Dialog.Title>Foto de Perfil</Dialog.Title>
+                      <Dialog.Description mb="4">
+                        Arrastra o sube la foto de perfil de la persona
+                      </Dialog.Description>
+                      <AspectRatio ratio={4 / 3} rounded="lg" overflow="hidden">
+                        <PhotoDropzone personId={personId} />
+                      </AspectRatio>
+                    </Dialog.Body>
+                    <Dialog.CloseTrigger top="0" insetEnd="-12" asChild>
+                      <CloseButton bg="bg" size="sm" />
+                    </Dialog.CloseTrigger>
+                  </Dialog.Content>
+                </Dialog.Positioner>
+              </Portal>
+            </Dialog.Root>
           
           {/* Nombre y Apellidos */}
-          <div className="flex flex-col md:items-center ">
             <p className="text-[14px] font-semibold text-black">{persona.txPrimerNombre} {persona.txSegundoNombre}</p>
             <p className="text-[14px] font-semibold text-black">{persona.txPrimerApellido} {persona.txSegundoApellido}</p>
           </div>
@@ -65,33 +94,7 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
         </IconButton>
       </div>
 
-      {/* Dialog para editar foto */}
-      <Dialog.Root placement="center">
-        <Dialog.Trigger asChild>
-          <Button variant="outline" size="sm" className="mb-4 md:self-start">
-            Editar Foto
-          </Button>
-        </Dialog.Trigger>
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content>
-              <Dialog.Body pt="4">
-                <Dialog.Title>Foto de Perfil</Dialog.Title>
-                <Dialog.Description mb="4">
-                  Arrastra o sube la foto de perfil de la persona
-                </Dialog.Description>
-                <AspectRatio ratio={4 / 3} rounded="lg" overflow="hidden">
-                  <PhotoDropzone personId={personId} />
-                </AspectRatio>
-              </Dialog.Body>
-              <Dialog.CloseTrigger top="0" insetEnd="-12" asChild>
-                <CloseButton bg="bg" size="sm" />
-              </Dialog.CloseTrigger>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
+      
 
       {/* Menú (Oculto en pantallas pequeñas y visible cuando el estado isOpen es true) */}
       <div
