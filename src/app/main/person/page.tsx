@@ -2,7 +2,7 @@
 
 import { fetchGeneros, fetchTiposIdentificacion, savePersona } from "@/app/helpers/api";
 import { Toaster, toaster } from "@/components/ui/toaster";
-import { Button, createListCollection, Input, ListCollection, Portal, Select } from "@chakra-ui/react";
+import { Button, Input } from "@chakra-ui/react";
 import { FormEvent, useEffect, useState } from "react";
 import { BsFillSave2Fill } from "react-icons/bs";
 
@@ -36,7 +36,18 @@ const PersonPage = () => {
     setErrorMessage('');
     
     const formData = new FormData(event.currentTarget)
-    console.log(formData)
+    
+    // Convertir nombres y apellidos a mayúsculas
+    const primerNombre = formData.get('primerNombre')?.toString().toUpperCase() || '';
+    const segundoNombre = formData.get('segundoNombre')?.toString().toUpperCase() || '';
+    const primerApellido = formData.get('primerApellido')?.toString().toUpperCase() || '';
+    const segundoApellido = formData.get('segundoApellido')?.toString().toUpperCase() || '';
+
+    // Actualizar el FormData con los valores en mayúsculas
+    formData.set('primerNombre', primerNombre);
+    formData.set('segundoNombre', segundoNombre);
+    formData.set('primerApellido', primerApellido);
+    formData.set('segundoApellido', segundoApellido);
   
     const result = await savePersona(formData);
 
@@ -73,7 +84,7 @@ const PersonPage = () => {
               </label>
               <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="tipoIdentificacion">
                 {tiposIdentificacion.map((tipo: any) => (
-                      <option value={tipo.nmTipoIdentificacion.toString()}>{tipo.txTipoIdentificacion.toString()}</option>
+                      <option key={tipo.nmTipoIdentificacion} value={tipo.nmTipoIdentificacion.toString()}>{tipo.txTipoIdentificacion.toString()}</option>
                 ))}
               </select>
             </div>
@@ -89,26 +100,45 @@ const PersonPage = () => {
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
                 Primer Nombre
               </label>
-              <Input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" name="primerNombre" type="text" />
-              {/*<p className="text-red-500 text-xs italic">Please fill out this field.</p>*/}
+              <Input 
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white uppercase" 
+                name="primerNombre" 
+                type="text"
+                style={{ textTransform: 'uppercase' }}
+              />
             </div>
             <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
                 Segundo Nombre
               </label>
-              <Input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" name="segundoNombre" type="text" />
+              <Input 
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white uppercase" 
+                name="segundoNombre" 
+                type="text"
+                style={{ textTransform: 'uppercase' }}
+              />
             </div>
             <div className="w-full md:w-1/4 px-3">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
                 Primer Apellido
               </label>
-              <Input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="primerApellido" type="text" />
+              <Input 
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 uppercase" 
+                name="primerApellido" 
+                type="text"
+                style={{ textTransform: 'uppercase' }}
+              />
             </div>
             <div className="w-full md:w-1/4 px-3">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" >
                 Segundo Apellido
               </label>
-              <Input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="segundoApellido" type="text" />
+              <Input 
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 uppercase" 
+                name="segundoApellido" 
+                type="text"
+                style={{ textTransform: 'uppercase' }}
+              />
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-2">
@@ -118,7 +148,7 @@ const PersonPage = () => {
               </label>
               <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="genero">
                 {generos.map((genero: any) => (
-                      <option value={genero.nmIdGenero.toString()}>{genero.txGenero.toString()}</option>
+                      <option key={genero.nmIdGenero} value={genero.nmIdGenero.toString()}>{genero.txGenero.toString()}</option>
                 ))}
               </select>
             </div>

@@ -21,7 +21,7 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status == 402) {
+      if (response.status == 401) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
@@ -568,5 +568,35 @@ export const saveValiente = async (formData: FormData) => {
     return {
       error: error instanceof Error ? error.message : 'Error al guardar el valiente'
     };
+  }
+};
+
+export const fetchViviendasCount = async () => {
+  try {
+    const result = await apiFetch('/viviendas/count');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener el conteo de viviendas:', error);
+    return 0;
+  }
+};
+
+export const fetchAngelesCount = async () => {
+  try {
+    const result = await apiFetch('/angeles/count');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener el conteo de ángeles:', error);
+    return 0;
+  }
+};
+
+export const fetchEstadisticasMensuales = async () => {
+  try {
+    const result = await apiFetch('/fichas-por-valiente/estadisticas-mensuales');
+    return result;
+  } catch (error) {
+    console.error('Error al obtener las estadísticas mensuales:', error);
+    return [];
   }
 };
