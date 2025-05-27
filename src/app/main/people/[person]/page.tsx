@@ -77,7 +77,18 @@ const PersonPage = () => {
       formData.append("idPersona", personId)
     }
 
-    Object.entries(data).forEach(([key, value]) => formData.append(key, value))
+    // Convertir nombres y apellidos a mayúsculas
+    const upperCaseData = {
+      ...data,
+      txPrimerNombre: data.txPrimerNombre.toUpperCase(),
+      txSegundoNombre: data.txSegundoNombre?.toUpperCase(),
+      txPrimerApellido: data.txPrimerApellido.toUpperCase(),
+      txSegundoApellido: data.txSegundoApellido?.toUpperCase()
+    }
+
+    Object.entries(upperCaseData).forEach(([key, value]) => {
+      if (value !== undefined) formData.append(key, value)
+    })
 
     const result = await savePersona(formData)
 

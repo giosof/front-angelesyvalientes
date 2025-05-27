@@ -1,11 +1,11 @@
 import React from "react";
-import People from "./people/page";
+import CifrasPage from "./reportes/cifras/page";
 
 
 const Home: React.FC = () => {
   return (
     <main className="flex h-screen flex-col">
-      <People />
+      <CifrasPage />
     </main>
   );
 };

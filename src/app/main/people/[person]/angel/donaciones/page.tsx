@@ -67,8 +67,11 @@ const Donaciones = () => {
         setIsLoading(true);
         try {
             const donacionData = {
-                idTipoDonacion: parseInt(donacion.tipo),
-                idPersona: personId,
+                idDonacion: 0,
+                tipoDonacion: {
+                    id: parseInt(donacion.tipo),
+                    tipoDonacion: tiposDonacion.find(t => t.id === parseInt(donacion.tipo))?.tipoDonacion || ''
+                },
                 fecha: new Date().toISOString().split('T')[0],
                 observacion: donacion.observacion
             };
@@ -79,9 +82,7 @@ const Donaciones = () => {
                 descripcion: descripcion
             };
 
-            console.log(donacionData);
-            console.log(angelData);
-            const response = await saveDonacion(donacionData);
+            const response = await saveDonacion(personId, donacionData);
             const angelResponse = await saveAngel(angelData);
             
             if (response && angelResponse) {

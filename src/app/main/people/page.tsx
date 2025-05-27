@@ -33,7 +33,6 @@ const People = () => {
     <Box
       bg="white"
       p={5}
-      borderRadius="2xl"
       boxShadow="lg"
       overflowX="auto"
     >
