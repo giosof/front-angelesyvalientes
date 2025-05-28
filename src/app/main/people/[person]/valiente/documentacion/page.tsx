@@ -84,8 +84,8 @@ const DocumentacionForm = () => {
 
   return (
     <Box>
-      <Box  as="form" onSubmit={handleSubmit(onSubmit)} className="p-4 mb-6 border border-gray-300 rounded-lg">
       <p className="mb-6">Valiente | Documentación</p>
+      <Box  as="form" onSubmit={handleSubmit(onSubmit)} className="p-4 mb-6 border border-gray-300 rounded-lg">
       <div id="date" className="mb-4">
         <label className="block text-gray-700 mb-2">Fecha</label>
         <DatePicker

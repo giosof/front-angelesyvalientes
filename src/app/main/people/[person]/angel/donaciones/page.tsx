@@ -103,7 +103,7 @@ const Donaciones = () => {
     };
 
     return (
-        <div className="p-6 md:p-12 bg-background min-h-screen">
+        <div className="bg-background min-h-screen">
             <p className="mb-6">Angel  | Donaciones</p>
             <div className="mb-8">
                 <div className="mb-2 font-bold text-xs uppercase tracking-wide text-gray-700">Datos de Adicionales</div>

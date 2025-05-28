@@ -46,11 +46,6 @@ const calculateAge = (birthDate: string) => {
   const today = new Date();
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
   
   return age;
 };
@@ -236,7 +231,7 @@ export default function CifrasPage() {
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="mes" />
-                    <YAxis>
+                    <YAxis allowDecimals={false} >
                       <Label
                         value="Fichas aprobadas"
                         angle={-90}
@@ -253,7 +248,6 @@ export default function CifrasPage() {
                         dataKey={`programas.${programa}`}
                         name={programa}
                         stroke={programColors[programa]}
-                        dot={< BiHappy />}
                       />
                     ))}
                   </LineChart>

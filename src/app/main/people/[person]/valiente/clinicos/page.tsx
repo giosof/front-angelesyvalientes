@@ -88,8 +88,9 @@ const ClinicosForm = () => {
 
   return (
     <Box>
-      <Box  as="form" onSubmit={handleSubmit(onSubmit)}  className="p-4 mb-6 border border-gray-300 rounded-lg">
       <p className="mb-6">Valiente | Informes Clínicos</p>
+      <Box  as="form" onSubmit={handleSubmit(onSubmit)}  className="p-4 mb-6 border border-gray-300 rounded-lg">
+      
       <div id="date" className="mb-4">
         <label className="block text-gray-700 mb-2">Fecha</label>
         <DatePicker
@@ -147,7 +148,7 @@ const ClinicosForm = () => {
             <tr>
               <th className="py-2 border border-gray-200 bg-red-100">Fecha</th>
               <th className="py-2 border border-gray-200 bg-red-100">Tipo Informe</th>
-              <th className="py-2 border border-gray-200 bg-red-100">Profecional</th>
+              <th className="py-2 border border-gray-200 bg-red-100">Profesional</th>
               <th className="py-2 border border-gray-200 bg-red-100">Pdf</th>
             </tr>
           </thead>

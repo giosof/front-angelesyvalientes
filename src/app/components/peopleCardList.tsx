@@ -55,19 +55,19 @@ const PeopleCardList = ({ peopleList }: { peopleList: any[] }) => {
       </Box>
 
       {/* Contenedor de cards */}
-      <Stack gap={4}>
+      <Stack gap={2}>
         {filteredPeople.map((person: any) => (
           <Card.Root 
             key={person.id}
-            className="bg-white dark:bg-amber-200 border border-transparent rounded-2xl shadow-md hover:shadow-xl transition-all"
+            className="bg-white bg-amber-100 border border-transparent rounded-2xl shadow-md hover:shadow-xl transition-all"
             borderRadius="2xl"
-            p={4}
+            p={2}
             shadow="md"
             _hover={{ shadow: "lg", transform: "scale(1.01)", transition: "0.2s" }}
             onClick={() => router.push(`/main/people/${person.id}`)}
           >
             <Card.Header>
-              <Flex justify="space-between" align="center" mb={2}>
+              <Flex justify="space-between" align="center" >
                 <Heading className="text-lg font-semibold text-gray-600 dark:text-stone-700">
                   {person.txPrimerNombre} {person.txSegundoNombre} {person.txPrimerApellido} {person.txSegundoApellido}
                 </Heading>
@@ -86,7 +86,7 @@ const PeopleCardList = ({ peopleList }: { peopleList: any[] }) => {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={4}>
+              <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={2}>
                 <Box>
                   <Text className="text-sm font-semibold text-gray-600 dark:text-stone-700">Identificación:</Text>
                   <Text className="text-md text-gray-800 dark:text-stone-700">{person.txNumeroIdentificacion}</Text>
