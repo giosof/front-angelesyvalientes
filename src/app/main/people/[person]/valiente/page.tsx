@@ -1,8 +1,8 @@
 'use client'
 
-import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona, saveValiente } from "@/app/helpers/api";
+import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona, saveValiente, updateValiente } from "@/app/helpers/api";
 import { Toaster, toaster } from "@/components/ui/toaster";
-import { Button, Checkbox, Em, Field, Input } from "@chakra-ui/react";
+import { Button, Checkbox, Em, Field, Group, IconButton, Input } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BsFillSave2Fill } from "react-icons/bs";
@@ -13,6 +13,7 @@ import { es } from 'date-fns/locale/es';
 registerLocale('es', es)
 
 import "react-datepicker/dist/react-datepicker.css";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface FormValues {
   nmIdPersona: number
@@ -40,7 +41,7 @@ const PersonPage = () => {
   const [gruposEtnicos, setGruposEtnicos] = useState<any>([]);
   const [persona, setPersona] = useState<any>();
   const [startDate, setStartDate] = useState<Date>();
-  const { register, handleSubmit, setValue, getValues, formState: { errors, isSubmitting } } = useForm<FormValues>()
+  const { register, handleSubmit, setValue, getValues, formState: { errors, isSubmitting }, watch } = useForm<FormValues>()
 
   useEffect(() => {
     async function getInfo() {
@@ -64,8 +65,13 @@ const PersonPage = () => {
         })
 
         // Asignar valores especiales de objetos anidados
-        setValue("clasificacionValiente", resPersona.clasificacionValiente?.id.toString())
-        setValue("grupoEtnico", resPersona.grupoEtnico?.id.toString())
+        setValue("clasificacionValiente", resPersona.clasificacionValiente?.id?.toString() || "1")
+        setValue("grupoEtnico", resPersona.grupoEtnico?.id?.toString() || "1")
+        setValue("poblacionLgtbiq", resPersona.poblacionLgtbiq || false)
+      } else {
+        setValue("clasificacionValiente", "1")
+        setValue("grupoEtnico", "1")
+        setValue("poblacionLgtbiq", false)
       }
     }
 
@@ -93,13 +99,21 @@ const PersonPage = () => {
     // Agregar el resto de los campos
     Object.entries(data).forEach(([key, value]) => {
       if (key !== 'nmIdPersona' && key !== 'fechaNacimiento') {
-        formData.append(key, value)
+        if (key === 'grupoEtnico' || key === 'clasificacionValiente') {
+          formData.append(key, value || "1") // Asegurar que siempre haya un valor por defecto
+        } else if (['nombreResponsable', 'parentescoResponsable', 'tallaCamisa', 'tallaPantalon'].includes(key)) {
+          formData.append(key, String(value).toUpperCase()) // Convertir a mayúsculas
+        } else {
+          formData.append(key, value)
+        }
       }
     })
 
-    const result = await saveValiente(formData)
+    const result = persona?.clasificacionValiente 
+      ? await updateValiente(personId, formData)
+      : await saveValiente(formData)
 
-    if (result && result.nmIdPersona) {
+    if (result && result.id) {
       toaster.create({
         title: "Persona guardada",
         description: "La información fue almacenada exitosamente",
@@ -154,13 +168,25 @@ const PersonPage = () => {
               </Field.Root>
             </div>
             <div className="w-full md:w-1/3 px-3">
-              <Field.Root defaultValue={persona?.txNumeroIdentificacion} >
+              <Field.Root defaultValue={persona?.txNumeroIdentificacion} className="flex flex-wrap">
                 <Field.Label className="block uppercase tracking-wide text-gray-700 text-xs font-bold">
                 Galería de Fotos <Field.RequiredIndicator />
                 </Field.Label>
-                <Input {...register("urlGaleria")}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                type="text" />
+                <Group attached w="full" maxW="sm">
+                  <Input {...register("urlGaleria")}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  type="text" />
+                  {watch("urlGaleria") && (
+                    <IconButton
+                      variant="ghost"
+                      size="xs"
+                      onClick={() => window.open(watch("urlGaleria"), '_blank')}
+                      aria-label="Abrir galería"
+                    >
+                      <FaExternalLinkAlt />
+                    </IconButton>
+                  )}
+                </Group>
               </Field.Root>
             </div>
           </div>
@@ -182,8 +208,10 @@ const PersonPage = () => {
             </div>
             <div className="w-full md:w-1/2 md:ps-6 pt-4 inline-block">
               <Checkbox.Root
-                {...persona?.poblacionLgtbiq && 'defaultChecked'}
-                {...register("poblacionLgtbiq")}
+                checked={getValues("poblacionLgtbiq")}
+                onCheckedChange={(details) => {
+                  setValue("poblacionLgtbiq", details.checked === true, { shouldValidate: true });
+                }}
                 className="flex items-center gap-2"
               >
                 <Checkbox.HiddenInput />
@@ -204,7 +232,8 @@ const PersonPage = () => {
                 </Field.Label>
                 <Input {...register("nombreResponsable")}
                 className="appearance-none uppercase w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text"  />
+                type="text" 
+                style={{ textTransform: 'uppercase' }} />
               </Field.Root>
             </div>
             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -214,7 +243,8 @@ const PersonPage = () => {
                 </Field.Label>
                 <Input {...register("parentescoResponsable")}
                 className="appearance-none uppercase w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text"  />
+                type="text" 
+                style={{ textTransform: 'uppercase' }} />
                 <Field.HelperText>Padre, Madre, Hermano, etc...</Field.HelperText>
               </Field.Root>
             </div>
@@ -242,7 +272,8 @@ const PersonPage = () => {
                 </Field.Label>
                 <Input {...register("tallaCamisa")}
                 className="appearance-none w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text" />
+                type="text" 
+                style={{ textTransform: 'uppercase' }} />
                 <Field.HelperText>Letras o números. Ej: 8, 10, 12,... o XS, S, M,...</Field.HelperText>
               </Field.Root>
             </div>
@@ -253,7 +284,8 @@ const PersonPage = () => {
                 </Field.Label>
                 <Input {...register("tallaPantalon")}
                 className="appearance-none w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text"/>
+                type="text"
+                style={{ textTransform: 'uppercase' }} />
                 <Field.HelperText>Letras o números. Ej: 8, 10, 12,... o XS, S, M,...</Field.HelperText>
               </Field.Root>
             </div>

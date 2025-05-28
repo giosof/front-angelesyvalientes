@@ -534,8 +534,8 @@ export const saveValiente = async (formData: FormData) => {
     const valienteData = {
       idPersona: parseInt(formData.get('nmIdPersona') as string),
       fechaNacimiento: formData.get('fechaNacimiento'),
-      grupoEtnicoId: parseInt(formData.get('grupoEtnico') as string),
-      clasificacionValienteId: parseInt(formData.get('clasificacionValiente') as string),
+      grupoEtnicoId: parseInt(formData.get('grupoEtnico') as string) || 1,
+      clasificacionValienteId: parseInt(formData.get('clasificacionValiente') as string) || 1,
       tallaCalzado: formData.get('tallaCalzado'),
       tallaCamisa: formData.get('tallaCamisa'),
       tallaPantalon: formData.get('tallaPantalon'),
@@ -543,7 +543,7 @@ export const saveValiente = async (formData: FormData) => {
       parentescoResponsable: formData.get('parentescoResponsable'),
       telefonoResponsable: formData.get('telefonoResponsable'),
       urlGaleria: formData.get('urlGaleria'),
-      poblacionLgtbiq: formData.get('poblacionLgtbiq') === 'true',
+      poblacionLgtbiq: formData.get('poblacionLgtbiq') === 'on',
       activo: true
     };
 
@@ -598,5 +598,50 @@ export const fetchEstadisticasMensuales = async () => {
   } catch (error) {
     console.error('Error al obtener las estadísticas mensuales:', error);
     return [];
+  }
+};
+
+export const updateValiente = async (idPersona: string, formData: FormData) => {
+  try {
+    const valienteData = {
+      fechaNacimiento: formData.get('fechaNacimiento'),
+      grupoEtnicoId: parseInt(formData.get('grupoEtnico') as string) || 1,
+      clasificacionValienteId: parseInt(formData.get('clasificacionValiente') as string) || 1,
+      tallaCalzado: formData.get('tallaCalzado'),
+      tallaCamisa: formData.get('tallaCamisa'),
+      tallaPantalon: formData.get('tallaPantalon'),
+      nombreResponsable: formData.get('nombreResponsable'),
+      parentescoResponsable: formData.get('parentescoResponsable'),
+      telefonoResponsable: formData.get('telefonoResponsable'),
+      urlGaleria: formData.get('urlGaleria'),
+      poblacionLgtbiq: formData.get('poblacionLgtbiq') === 'on',
+      activo: true
+    };
+
+    const response = await apiFetch(`/valientes/${idPersona}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(valienteData)
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al actualizar el valiente:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Error al actualizar el valiente'
+    };
+  }
+};
+
+export const fetchPersonPhoto = async (idPersona: string) => {
+  try {
+    const result = await apiFetch(`/personas/${idPersona}/PersonaFoto`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }, 'blob');
+    return result ? URL.createObjectURL(result) : null;
+  } catch (error) {
+    console.error('Error al obtener la foto de la persona:', error);
+    return null;
   }
 };

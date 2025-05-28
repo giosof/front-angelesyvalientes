@@ -61,7 +61,7 @@ const Header = () => {
             <Portal>
                 <Menu.Positioner>
                 <Menu.Content>
-                    <Menu.Item value="new-txt" onClick={() => router.push('/main/reportes/clases')}>Reporte de Clases</Menu.Item>
+                    <Menu.Item value="new-txt" onClick={() => router.push('/main/reportes/clases')}>Planilla de Clases</Menu.Item>
                     <Menu.Item value="new-file" onClick={() => router.push('/main/reportes/cifras')}>Estadísticas</Menu.Item>
                 </Menu.Content>
                 </Menu.Positioner>
@@ -114,7 +114,7 @@ const Header = () => {
                     setIsMenuOpen(false);
                   }}
                 >
-                  <TbReportAnalytics /> Reporte de Clases
+                  <TbReportAnalytics /> Planilla de Clases
                 </Button>
                 <Button 
                   variant="outline" 

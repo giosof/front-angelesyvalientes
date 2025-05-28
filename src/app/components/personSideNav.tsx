@@ -17,12 +17,13 @@ import {
 import { FiMenu, FiX } from "react-icons/fi";
 import { Image } from "@chakra-ui/react/image";
 import { useEffect, useState } from "react";
-import { fetchPersonInfo } from "../helpers/api";
+import { fetchPersonInfo, fetchPersonPhoto } from "../helpers/api";
 import Link from "next/link";
 import PhotoDropzone from "./photoDropzone";
 
 const PersonSideNav = ({ personId }: { personId: string }) => {
   const [persona, setPersona] = useState<any>({});
+  const [personaFoto, setPersonaFoto] = useState<string | null>(null);
   const { open, onToggle } = useDisclosure();
   const [isValiente, setIsValiente] = useState(false);
 
@@ -31,6 +32,10 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
       const resPersona = await fetchPersonInfo(personId);
       setPersona(resPersona);
       setIsValiente(!!resPersona.clasificacionValiente);
+      
+      // Obtener la foto de la persona
+      const foto = await fetchPersonPhoto(personId);
+      setPersonaFoto(foto);
     }
 
     if (personId && personId !== "0") {
@@ -49,16 +54,16 @@ const PersonSideNav = ({ personId }: { personId: string }) => {
         <div className="flex md:w-full md:flex-col flex-row md:items-center justify-items-center md:gap-3 mb-4 gap-6">
           {/* Imagen */}
           <Image
-            className="w-24 h-24 md:size-[10rem] rounded-full object-cover md:mb-3 mb-0 mr-4 rotate-[10deg]"
-            alt="Foto Persona"
-            src={`https://lh3.googleusercontent.com/a-/${persona.urlFoto}`}
+            className="w-24 h-24 md:size-[10rem] rounded-full object-cover md:mb-1 mb-0 mr-4 rotate-[10deg]"
+            alt="Foto"
+            src={personaFoto || '/default-avatar.png'}
           />
 
           <div className="flex flex-col md:items-center">
             {/* Dialog para editar foto */}
             <Dialog.Root placement="center">
               <Dialog.Trigger asChild>
-                <Button variant="outline" size="sm" className="mb-2 ms-6 md:self-start">
+                <Button variant="outline" size="sm" className="mb-2 md:ms-6 md:self-start">
                   Editar Foto
                 </Button>
               </Dialog.Trigger>
