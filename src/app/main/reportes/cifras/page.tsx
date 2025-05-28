@@ -37,6 +37,8 @@ const generateProgramColors = (programs: string[]) => {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
+  // Ajustar la fecha para compensar la zona horaria
+  date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
   const day = date.getDate();
   const month = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(date);
   return `${day} ${month.charAt(0).toUpperCase() + month.slice(1)}`;

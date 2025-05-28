@@ -208,13 +208,13 @@ const PersonPage = () => {
             </div>
             <div className="w-full md:w-1/2 md:ps-6 pt-4 inline-block">
               <Checkbox.Root
-                checked={getValues("poblacionLgtbiq")}
+                checked={watch("poblacionLgtbiq")}
                 onCheckedChange={(details) => {
                   setValue("poblacionLgtbiq", details.checked === true, { shouldValidate: true });
                 }}
                 className="flex items-center gap-2"
               >
-                <Checkbox.HiddenInput />
+                <Checkbox.HiddenInput {...register("poblacionLgtbiq")} />
                 <Checkbox.Control className="w-5 h-5 border border-gray-300 rounded data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700" />
                 <Checkbox.Label className="text-sm">¿Hace parte de la comunidad LGTBIQ+?</Checkbox.Label>
               </Checkbox.Root>
