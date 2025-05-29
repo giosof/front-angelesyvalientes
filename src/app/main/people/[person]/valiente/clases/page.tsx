@@ -8,7 +8,7 @@ import {
     Tabs,
 } from '@chakra-ui/react';
 import { Download, X, BookOpen, Calculator, Microscope, CheckCircle } from 'lucide-react';
-import { fetchProgramasByValiente, saveMatriculaValiente, fetchFichasByProgramaAndPersona, completarClase } from '@/app/helpers/api';
+import { fetchProgramasByValiente, saveMatriculaValiente, fetchFichasByProgramaAndPersona, completarClase, fetchDescargarFichas } from '@/app/helpers/api';
 import { useParams } from 'next/navigation';
 
 interface Programa {
@@ -99,8 +99,18 @@ const GestionDeClases: React.FC = () => {
         }
     };
 
-    const handleDescargarArchivo = (url: string) => {
-        window.open(`${process.env.NEXT_PUBLIC_BASE_URL}/documentos/${url}`, '_blank');
+    const handleDescargarArchivo = async (idFicha: number) => {
+        try {
+            const pdfUrl = await fetchDescargarFichas(idFicha);
+            if (pdfUrl) {
+              window.open(pdfUrl, '_blank');
+            } else {
+              alert('Error al cargar el PDF');
+            }
+          } catch (error) {
+            console.error('Error al cargar el PDF:', error);
+            alert('Error al cargar el PDF');
+          }
     };
 
     // Filtrar programas matriculados y no matriculados
@@ -185,7 +195,7 @@ const GestionDeClases: React.FC = () => {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleDescargarArchivo(ficha.urlRecurso)}
+                                            onClick={() => handleDescargarArchivo(ficha.idFicha)}
                                             className="text-gray-500 hover:text-red-700 border-gray-300 hover:border-red-700"
                                             disabled={!ficha.urlRecurso}
                                         >

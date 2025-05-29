@@ -21,7 +21,7 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status == 401) {
+      if (response.status == 402) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
@@ -642,6 +642,45 @@ export const fetchPersonPhoto = async (idPersona: string) => {
     return result ? URL.createObjectURL(result) : null;
   } catch (error) {
     console.error('Error al obtener la foto de la persona:', error);
+    return null;
+  }
+};
+
+export const fetchDescargarInfromeClinico  = async (idInforme: number) => {
+  try {
+    const result = await apiFetch(`/informesclinicos/${idInforme}/download`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }, 'blob');
+    return result ? URL.createObjectURL(result) : null;
+  } catch (error) {
+    console.error('Error al obtener la infrome clinico de la persona:', error);
+    return null;
+  }
+};
+
+export const fetchDescargarDocumento  = async (idDocumento: number) => {
+  try {
+    const result = await apiFetch(`/documentaciones/${idDocumento}/download`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }, 'blob');
+    return result ? URL.createObjectURL(result) : null;
+  } catch (error) {
+    console.error('Error al obtener la infrome clinico de la persona:', error);
+    return null;
+  }
+};
+
+export const fetchDescargarFichas  = async (idFicha: number) => {
+  try {
+    const result = await apiFetch(`/fichas/${idFicha}/download`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }, 'blob');
+    return result ? URL.createObjectURL(result) : null;
+  } catch (error) {
+    console.error('Error al obtener la infrome clinico de la persona:', error);
     return null;
   }
 };

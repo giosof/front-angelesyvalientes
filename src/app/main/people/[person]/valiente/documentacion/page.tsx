@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { es } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { saveDocumentacion, fetchDocumentacionesByPersona } from "@/app/helpers/api";
+import { saveDocumentacion, fetchDocumentacionesByPersona, fetchDescargarDocumento } from "@/app/helpers/api";
 import { useParams } from "next/navigation";
-import { Box, Input } from '@chakra-ui/react';
+import { Box, Input, Button } from '@chakra-ui/react';
 
 registerLocale('es', es);
 
@@ -71,6 +71,19 @@ const DocumentacionForm = () => {
       }
   };
 
+  const handleViewPdf = async (idDocumento: number) => {
+    try {
+      const pdfUrl = await fetchDescargarDocumento(idDocumento);
+      if (pdfUrl) {
+        window.open(pdfUrl, '_blank');
+      } else {
+        setMessage('Error al cargar el PDF');
+      }
+    } catch (error) {
+      console.error('Error al cargar el PDF:', error);
+      setMessage('Error al cargar el PDF');
+    }
+  };
 
   useEffect(() => {
     const fetchDocumentaciones = async () => {
@@ -143,9 +156,13 @@ const DocumentacionForm = () => {
                 <td className="py-2 px-4 border border-gray-200 bg-white text-gray-700 text-center">{doc.fecha}</td>
                 <td className="py-2 px-4 border border-gray-200 bg-white text-gray-700 text-center">{doc.tipoDocumentacion}</td>
                 <td className="py-2 px-4 border border-gray-200 bg-white text-gray-700 text-center">
-                  <a href={`https://drive.google.com/file/d/${doc.urlPdf}`} target="_blank" className="text-blue-500 hover:underline">
+                  <Button
+                    colorScheme="blue"
+                    size="sm"
+                    onClick={() => handleViewPdf(doc.idDocumentacion)}
+                  >
                     Ver PDF
-                  </a>
+                  </Button>
                 </td>
               </tr>
             ))}
