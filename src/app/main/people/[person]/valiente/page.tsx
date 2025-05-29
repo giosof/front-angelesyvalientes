@@ -51,7 +51,8 @@ const PersonPage = () => {
         if (resPersona.fechaNacimiento) {
           const fecha = new Date(resPersona.fechaNacimiento);
           if (!isNaN(fecha.getTime())) {
-            fecha.setDate(fecha.getDate() + 1);
+            // Ajustar la fecha para compensar la zona horaria
+            fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
             setStartDate(fecha);
           } else {
             setStartDate(undefined);
@@ -92,8 +93,11 @@ const PersonPage = () => {
     
     // Asegurar que la fecha se envíe en el formato correcto
     if (startDate) {
-      const formattedDate = startDate.toISOString().split('T')[0]
-      formData.append('fechaNacimiento', formattedDate)
+      // Ajustar la fecha para compensar la zona horaria antes de formatear
+      const adjustedDate = new Date(startDate);
+      adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset());
+      const formattedDate = adjustedDate.toISOString().split('T')[0];
+      formData.append('fechaNacimiento', formattedDate);
     }
 
     // Agregar el resto de los campos
