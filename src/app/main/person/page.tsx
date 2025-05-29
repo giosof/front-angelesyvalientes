@@ -6,11 +6,6 @@ import { Button, Input } from "@chakra-ui/react";
 import { FormEvent, useEffect, useState } from "react";
 import { BsFillSave2Fill } from "react-icons/bs";
 
-type TipoIdentificacion = {
-  nmTipoIdentificacion: number;
-  txTipoIdentificacion: string;
-};
-
 const PersonPage = () => {
   const [tiposIdentificacion, setTiposIdentificacion] = useState<any>();
   const [generos, setGeneros] = useState<any>();

@@ -10,9 +10,7 @@ import {
   Portal,
   Switch,
   Text,
-  useDisclosure,
-  VStack,
-  Box,
+  useDisclosure
 } from "@chakra-ui/react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { Image } from "@chakra-ui/react/image";

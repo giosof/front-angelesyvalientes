@@ -4,7 +4,6 @@ import { saveVivienda, fetchPersonInfo, fetchPeopleList, saveFamiliar,
   fetchFamiliaresByVivienda, asignarVivienda } from "@/app/helpers/api";
 import { Toaster } from "@/components/ui/toaster";
 import { Box, Button, Input, Text, Field, CheckboxGroup, CheckboxCard, Flex, Stack } from "@chakra-ui/react";
-import { Checkbox } from "@chakra-ui/checkbox";
 import { Divider } from "@chakra-ui/layout";
 import { Radio, RadioGroup } from "@chakra-ui/radio";
 import { useParams } from "next/navigation";

@@ -8,7 +8,7 @@ type Header = {
 
 type TableProps = {
   headers: Header[];
-  data: Array<Record<string, any>>;
+  data: Array<Record<string, string | number | boolean>>;
 };
 
 const DynamicTable: React.FC<TableProps> = ({ headers, data }) => {
@@ -28,9 +28,9 @@ const DynamicTable: React.FC<TableProps> = ({ headers, data }) => {
             {data.map((row, rowIndex) => (
                 <Table.Row key={rowIndex} className="hover:bg-gray-50">
                 {headers.map((header) => (
-                    <Table.Row key={header.key} className="px-4 py-2 text-sm text-gray-800">
+                    <Table.Cell key={`${rowIndex}-${header.key}`} className="px-4 py-2 text-sm text-gray-800">
                     {row[header.key]}
-                    </Table.Row>
+                    </Table.Cell>
                 ))}
                 </Table.Row>
             ))}

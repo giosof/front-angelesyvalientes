@@ -3,11 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Button,
     Input,
-    Select,
-    Stack,
     Tabs,
-    Box,
-    Text,
     Field,
 } from '@chakra-ui/react';
 import { BsFillSave2Fill } from 'react-icons/bs';
