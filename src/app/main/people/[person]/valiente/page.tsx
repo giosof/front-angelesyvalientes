@@ -10,6 +10,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { Text } from "@chakra-ui/layout";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from 'date-fns/locale/es';
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 registerLocale('es', es)
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -42,6 +43,7 @@ const PersonPage = () => {
   const [persona, setPersona] = useState<any>();
   const [startDate, setStartDate] = useState<Date>();
   const { register, handleSubmit, setValue, getValues, formState: { errors, isSubmitting }, watch } = useForm<FormValues>()
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function getInfo() {
@@ -118,17 +120,9 @@ const PersonPage = () => {
       : await saveValiente(formData)
 
     if (result && result.id) {
-      toaster.create({
-        title: "Persona guardada",
-        description: "La información fue almacenada exitosamente",
-        type: "success"
-      })
+      setMessage("La información fue almacenada exitosamente");
     } else {
-      toaster.create({
-        title: "Error",
-        description: result?.error || "No fue posible guardar la persona.",
-        type: "error"
-      })
+      setMessage(result?.error || "No fue posible guardar la persona.");
     }
   })
 
@@ -306,6 +300,11 @@ const PersonPage = () => {
             </div>
           </div>
         </form>
+        {message && (
+          <Alert status={message.includes('exitosamente') ? 'success' : 'error'} mt={4} borderRadius="md">
+            <AlertTitle>{message}</AlertTitle>
+          </Alert>
+        )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Box, Button, Input } from '@chakra-ui/react';
 import { saveEducacion, fetchEducacionesByPersona } from '@/app/helpers/api';
 import { useParams } from 'next/navigation';
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 
 const EstudiosForm = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -64,7 +65,11 @@ const EstudiosForm = () => {
         <Input id="nivel" {...register('nivel')} type="text" className="w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
       </div>
       <Button type="submit" className="bg-red-700 text-white p-2 rounded hover:bg-red-600">Guardar</Button>
-      {message && <p className="mt-2 text-center text-red-500">{message}</p>}
+      {message && (
+        <Alert status={message.includes('exitosamente') ? 'success' : 'error'} mt={4} borderRadius="md">
+          <AlertTitle>{message}</AlertTitle>
+        </Alert>
+      )}
     </Box>
 
     <Box>

@@ -86,7 +86,7 @@ const PhotoDropzone = ({personId} : {personId: string}) => {
             colorScheme="red"
             onClick={handleRemoveFile}
           >
-            <LuX />
+                <LuX />
           </Button>
           <Button
             mt={2}

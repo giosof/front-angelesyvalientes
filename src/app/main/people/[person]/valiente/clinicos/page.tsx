@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { saveInformesClinicos, fetchClinicosByPersona, fetchDescargarInfromeClinico } from "@/app/helpers/api";
 import { useParams } from "next/navigation";
 import { Box, Input, Button } from '@chakra-ui/react';
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 
 registerLocale('es', es);
 
@@ -135,7 +136,11 @@ const ClinicosForm = () => {
       <button className="bg-red-700 text-white p-2 rounded hover:bg-red-600" type="submit">
         Registrar Informe
       </button>
-      {message && <p className="mt-2 text-center text-red-500">{message}</p>}
+      {message && (
+        <Alert status={message.includes('exitosamente') ? 'success' : 'error'} mt={4} borderRadius="md">
+          <AlertTitle>{message}</AlertTitle>
+        </Alert>
+      )}
       </div>
       </Box>
       <Box >
