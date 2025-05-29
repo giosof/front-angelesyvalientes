@@ -10,6 +10,7 @@ import {
 import { Download, X, BookOpen, Calculator, Microscope, CheckCircle } from 'lucide-react';
 import { fetchProgramasByValiente, saveMatriculaValiente, fetchFichasByProgramaAndPersona, completarClase, fetchDescargarFichas } from '@/app/helpers/api';
 import { useParams } from 'next/navigation';
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 
 interface Programa {
     id: number;
@@ -30,6 +31,7 @@ const GestionDeClases: React.FC = () => {
     const [fichas, setFichas] = useState<Ficha[]>([]);
     const [programas, setProgramas] = useState<Programa[]>([]);
     const [fechasFinalizacion, setFechasFinalizacion] = useState<{ [idFicha: number]: string }>({});
+    const [message, setMessage] = useState<string | null>(null);
     const params = useParams()
     const personId = params.person as string
 
@@ -58,24 +60,24 @@ const GestionDeClases: React.FC = () => {
     const handleMatricular = async () => {
         try {
             if (!programaSeleccionado[0]) {
-                alert('Por favor seleccione un programa');
+                setMessage('Por favor seleccione un programa');
                 return;
             }
             
             const response = await saveMatriculaValiente(personId, programaSeleccionado[0]);
             if (response) {
-                alert('Matrícula realizada con éxito');
+                setMessage('Matrícula realizada con éxito');
                 // Recargar programas después de matricular
                 const data = await fetchProgramasByValiente(personId);
                 if (data && Array.isArray(data)) {
                     setProgramas(data);
                 }
             } else {
-                alert('Error al realizar la matrícula');
+                setMessage('Error al realizar la matrícula');
             }
         } catch (error) {
             console.error('Error al matricular:', error);
-            alert('Error al realizar la matrícula');
+            setMessage('Error al realizar la matrícula');
         }
     };
 
@@ -83,7 +85,7 @@ const GestionDeClases: React.FC = () => {
         try {
             const response = await completarClase(idFicha.toString(), personId, fechaFinalizacion);
             if (response) {
-                alert('Clase completada con éxito');
+                setMessage('Clase completada con éxito');
                 // Recargar fichas del programa actual
                 if (programaSeleccionado[0]) {
                     await cargarFichas(programaSeleccionado[0]);
@@ -91,11 +93,11 @@ const GestionDeClases: React.FC = () => {
                 // Limpiar la fecha seleccionada para esa ficha
                 setFechasFinalizacion((prev) => ({ ...prev, [idFicha]: '' }));
             } else {
-                alert('Error al completar la clase');
+                setMessage('Error al completar la clase');
             }
         } catch (error) {
             console.error('Error al completar clase:', error);
-            alert('Error al completar la clase');
+            setMessage('Error al completar la clase');
         }
     };
 
@@ -105,11 +107,11 @@ const GestionDeClases: React.FC = () => {
             if (pdfUrl) {
               window.open(pdfUrl, '_blank');
             } else {
-              alert('Error al cargar el PDF');
+              setMessage('Error al cargar el PDF');
             }
           } catch (error) {
             console.error('Error al cargar el PDF:', error);
-            alert('Error al cargar el PDF');
+            setMessage('Error al cargar el PDF');
           }
     };
 
@@ -122,6 +124,12 @@ const GestionDeClases: React.FC = () => {
             <div className="flex flex-wrap -mx-3 mb-6 justify-between">
                 <h1 className="mb-6">Valiente | Gestión de Clases</h1>
             </div>
+
+            {message && (
+                <Alert status={message.includes('éxito') ? 'success' : 'error'} mt={4} borderRadius="md">
+                    <AlertTitle>{message}</AlertTitle>
+                </Alert>
+            )}
 
             {programasNoMatriculados.length > 0 && (
                 <div className="flex flex-wrap -mx-3 mb-6">

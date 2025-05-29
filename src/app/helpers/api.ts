@@ -684,3 +684,41 @@ export const fetchDescargarFichas  = async (idFicha: number) => {
     return null;
   }
 };
+
+export const verificarUsuario = async (cdUsuario: string) => {
+  try {
+    const response = await apiFetch(`/auth/verificar-usuario`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cdUsuario }),
+    }, 'text');
+
+    return response;
+  } catch (error) {
+    console.error('Error al verificar usuario:', error);
+    return null;
+  }
+};
+
+export const actualizarContrasena = async (cdUsuario: string, codigoVerificacion: string, nuevaContrasena: string) => {
+  try {
+    const response = await apiFetch(`/auth/actualizar-contrasena`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cdUsuario,
+        codigoVerificacion,
+        nuevaContrasena
+      }),
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error al actualizar contraseña:', error);
+    return null;
+  }
+};

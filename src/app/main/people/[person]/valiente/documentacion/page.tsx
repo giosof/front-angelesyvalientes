@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { saveDocumentacion, fetchDocumentacionesByPersona, fetchDescargarDocumento } from "@/app/helpers/api";
 import { useParams } from "next/navigation";
 import { Box, Input, Button } from '@chakra-ui/react';
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 
 registerLocale('es', es);
 
@@ -18,6 +19,7 @@ const DocumentacionForm = () => {
   const [message, setMessage] = useState<string | null>(null);
   const params = useParams()
   const personId = params.person as string
+
   const handleFileChange = (event: any) => {
     setFile(event.target.files[0]);
   };
@@ -25,7 +27,6 @@ const DocumentacionForm = () => {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredDocumentos = documentos.filter((doc) => {
-  
     if (!searchTerm) return true
     const docType = `${doc.tipoDocumentacion}`
     return (
@@ -98,7 +99,7 @@ const DocumentacionForm = () => {
   return (
     <Box>
       <p className="mb-6">Valiente | Documentación</p>
-      <Box  as="form" onSubmit={handleSubmit(onSubmit)} className="p-4 mb-6 border border-gray-300 rounded-lg">
+      <Box as="form" onSubmit={handleSubmit(onSubmit)} className="p-4 mb-6 border border-gray-300 rounded-lg">
       <div id="date" className="mb-4">
         <label className="block text-gray-700 mb-2">Fecha</label>
         <DatePicker
@@ -123,7 +124,11 @@ const DocumentacionForm = () => {
       <button className="bg-red-700 text-white p-2 rounded hover:bg-red-600" type="submit">
         Registrar Documento
       </button>
-      {message && <p className="mt-2 text-center text-red-500">{message}</p>}
+      {message && (
+        <Alert status={message.includes('exitosamente') ? 'success' : 'error'} mt={4} borderRadius="md">
+          <AlertTitle>{message}</AlertTitle>
+        </Alert>
+      )}
       </div>
       </Box>
       <Box >

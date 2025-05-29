@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { BsFillSave2Fill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
+import { Alert, AlertTitle } from '@chakra-ui/alert';
 
 interface Vivienda {
     id: number;
@@ -398,6 +399,12 @@ const ViviendaForm = () => {
                                 </div>
                             </Box>
                         </Box>
+                    )}
+
+                    {message && (
+                        <Alert status={message.includes('exitosamente') ? 'success' : 'error'} mt={4} borderRadius="md">
+                            <AlertTitle>{message}</AlertTitle>
+                        </Alert>
                     )}
                 </form>
             </Box>
