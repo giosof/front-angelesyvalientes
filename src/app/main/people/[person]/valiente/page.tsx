@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchClasificacionesValiente, fetchGeneros, fetchGruposEtnicos, fetchPersonInfo, fetchTiposIdentificacion, savePersona, saveValiente, updateValiente } from "@/app/helpers/api";
+import { fetchClasificacionesValiente, fetchGruposEtnicos, fetchPersonInfo, saveValiente, updateValiente } from "@/app/helpers/api";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { Button, Checkbox, Em, Field, Group, IconButton, Input } from "@chakra-ui/react";
 import { useParams } from "next/navigation";

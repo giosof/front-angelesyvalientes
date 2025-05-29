@@ -14,7 +14,6 @@ import {
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 import { fetchValientesBirthdays, fetchValientesByClasificacion, fetchViviendasCount, fetchAngelesCount, fetchEstadisticasMensuales } from '@/app/helpers/api';
 import { FaHeart } from 'react-icons/fa6';
-import { BiHappy } from "react-icons/bi";
 
 // Función para generar un color hexadecimal aleatorio
 const generateRandomColor = () => {

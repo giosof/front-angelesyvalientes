@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormEvent } from 'react';
-import { Button, ButtonGroup, Link, PinInput, Stack, Steps, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, PinInput, Stack, Steps, Text } from "@chakra-ui/react";
 import { loginUser } from "../helpers/api";
 
 export default function Login() {

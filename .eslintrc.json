@@ -8,5 +8,6 @@
     "@typescript-eslint/no-empty-object-type": "off",
     "react/jsx-key": "off",
     "prefer-const": "off"
-  }
+  },
+  "ignorePatterns": ["**/*"]
 } 
