@@ -54,8 +54,10 @@ const calculateAge = (birthDate: string) => {
 
 export default function CifrasPage() {
   const [birthdays, setBirthdays] = useState<Array<{
-    nombres: string;
-    apellidos: string;
+    primerNombre: string;
+    segundoNombre: string;
+    primerApellido: string;
+    segundoApellido: string;
     fechaNacimiento: string;
   }> | null>(null);
   const [childrenCount, setChildrenCount] = useState<number | null>(null);
@@ -203,7 +205,7 @@ export default function CifrasPage() {
                   <Box key={index} py={2} borderBottom="1px" borderColor="gray.200">
                     <Stack direction="row" justify="space-between" align="center">
                       <Stack direction="row" align="center" gap={2}>
-                        <Text color="black">{`${birthday.nombres} ${birthday.apellidos}`}</Text>
+                        <Text color="black">{`${birthday.primerNombre} ${birthday.segundoNombre} ${birthday.primerApellido} ${birthday.segundoApellido}`}</Text>
                         <Text color="gray.500" fontSize="sm">({calculateAge(birthday.fechaNacimiento)} años)</Text>
                       </Stack>
                       <Text color="gray.600">{formatDate(birthday.fechaNacimiento)}</Text>
