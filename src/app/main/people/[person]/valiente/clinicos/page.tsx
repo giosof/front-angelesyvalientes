@@ -153,7 +153,7 @@ const ClinicosForm = () => {
         <input
           type="text"
           placeholder="Buscar por tipo de informe"
-          className="w-full p-2 focus:outline-none"
+          className="w-full p-2 focus:outline-none text-black"
           onChange={(e) => {
             setSearchTerm(e.target.value);
             handleSearch();

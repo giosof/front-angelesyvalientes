@@ -41,6 +41,7 @@ const ViviendaForm = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [personaSeleccionada, setPersonaSeleccionada] = useState<Persona | null>(null);
     const [familiares, setFamiliares] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [familiar, setFamiliar] = useState({
         nombre: '',
@@ -188,6 +189,12 @@ const ViviendaForm = () => {
         }
     };
 
+    const personasFiltradas = personasConVivienda.filter(persona =>
+        `${persona.txPrimerNombre} ${persona.txSegundoNombre} ${persona.txPrimerApellido} ${persona.txSegundoApellido}`
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="bg-gray-50 min-h-screen py-11 p-6">
           <div className="flex flex-wrap -mx-3 mb-6 justify-between">
@@ -217,7 +224,7 @@ const ViviendaForm = () => {
                                     <Field.Root defaultValue={""}>
                                         <Text mb={1} fontWeight="medium">Dirección</Text>
                                         <Input {...register('direccion')}
-                                            className="bg-gray-200 border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:bg-white focus:border-blue-400"
+                                            className="bg-gray-200 border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:bg-white focus:border-blue-400 text-black"
                                             type="text"
                                             placeholder="Dirección de la vivienda"
                                         />
@@ -375,8 +382,15 @@ const ViviendaForm = () => {
                                     <Button onClick={() => setModalOpen(false)} size="sm" colorScheme="red" borderRadius="full">Cerrar</Button>
                                 </Flex>
                                 <Divider mb={4} />
+                                <Input
+                                    type="text"
+                                    placeholder="Buscar por nombre"
+                                    className="w-full mb-4 p-2 focus:outline-none text-black"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                />
                                 <div className="max-h-96 overflow-y-auto">
-                                    {personasConVivienda.map((persona) => (
+                                    {personasFiltradas.map((persona) => (
                                         <div
                                             key={persona.id}
                                             className="p-4 border-b flex items-center justify-between hover:bg-purple-50 rounded-lg transition-colors"

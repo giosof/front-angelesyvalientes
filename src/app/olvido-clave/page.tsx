@@ -4,34 +4,70 @@ import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormEvent } from 'react';
-import { Button, ButtonGroup, PinInput, Stack, Steps, Text } from "@chakra-ui/react";
-import { loginUser } from "../helpers/api";
+import { Button, ButtonGroup, PinInput, Stack, Text, Input, Box } from "@chakra-ui/react";
+import { Alert, AlertTitle } from '@chakra-ui/alert';
+import { verificarUsuario, actualizarContrasena } from "../helpers/api";
 
-export default function Login() {
-  const router = useRouter()
-  const [errorMessage, setErrorMessage] = useState('')
- 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setErrorMessage('');
-    
-    const formData = new FormData(event.currentTarget)
-    const username = formData.get('username') as string
-    const password = formData.get('password') as string
-  
-    const result = await loginUser(username, password);
+export default function OlvidoClave() {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [username, setUsername] = useState('');
+  const [codigoVerificacion, setCodigoVerificacion] = useState('');
+  const [nuevaContrasena, setNuevaContrasena] = useState('');
+  const [confirmarContrasena, setConfirmarContrasena] = useState('');
+  const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState(false);
 
-    if (result.ok) {
-      router.push('/main');
-    } else {
-      setErrorMessage(result.error || 'Error desconocido');
+  // Paso 1: Validar usuario
+  const handleVerificarUsuario = async () => {
+    setMessage('');
+    if (!username) {
+      setMessage('Por favor ingrese su usuario');
+      return;
     }
-  }
+    const result = await verificarUsuario(username);
+    if (result && typeof result === 'string' && result.toLowerCase().includes('código')) {
+      setMessage(result);
+      setCurrentStep(1);
+    } else {
+      setMessage(result || 'Error al verificar el usuario');
+    }
+  };
+
+  // Paso 2: Validar código
+  const handleVerificarCodigo = () => {
+    setMessage('');
+    if (codigoVerificacion.length !== 4) {
+      setMessage('Por favor ingrese el código completo');
+      return;
+    }
+    setCurrentStep(2);
+  };
+
+  // Paso 3: Cambiar clave
+  const handleActualizarContrasena = async () => {
+    setMessage('');
+    if (!nuevaContrasena || !confirmarContrasena) {
+      setMessage('Por favor ingrese y confirme la nueva contraseña');
+      return;
+    }
+    if (nuevaContrasena !== confirmarContrasena) {
+      setMessage('Las contraseñas no coinciden');
+      return;
+    }
+    const result = await actualizarContrasena(username, codigoVerificacion, nuevaContrasena);
+    if (result && typeof result === 'string' && result.toLowerCase().includes('actualizada')) {
+      setSuccess(true);
+      setMessage(result);
+    } else {
+      setMessage(result || 'Error al actualizar la contraseña');
+    }
+  };
 
   return (
     <div>
       <main>
-        <div className="flex flex-col  lg:flex-row h-screen w-full">
+        <div className="flex flex-col lg:flex-row h-screen w-full">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 flex items-center justify-center px-4 m-20">
             <div className="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg">
@@ -51,101 +87,158 @@ export default function Login() {
           
           {/* Formulario a la derecha */}
           <div className="w-full lg:w-1/2 flex items-center justify-center px-4 bg-amber-300">
-            <Steps.Root
-              orientation="vertical"
-              height="400px"
-              defaultStep={0}
-              count={3}
-            >
-              <Steps.List>
-                  <Steps.Item key="0" index={0} title="1. Validación usuario">
-                    <Steps.Indicator />
-                    <Steps.Title className="text-black">Validación usuario</Steps.Title>
-                    <Steps.Separator />
-                  </Steps.Item>
-                  <Steps.Item key="1" index={1} title="2. Verificación código">
-                    <Steps.Indicator />
-                    <Steps.Title className="text-black">Verificación código</Steps.Title>
-                    <Steps.Separator />
-                  </Steps.Item>
-                  <Steps.Item key="2" index={2} title="3. Cambio clave">
-                    <Steps.Indicator />
-                    <Steps.Title className="text-black">Cambio clave</Steps.Title>
-                    <Steps.Separator />
-                  </Steps.Item>
-              </Steps.List>
-
-              <Stack>
-                  <Steps.Content key="0" index={0}>
-                  <div className="mb-4">
+            <div className="w-full max-w-md">
+              {/* Indicador de pasos manual */}
+              <div className="flex flex-col items-start mb-8">
+                <div className="flex items-center mb-4">
+                  <div className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold mr-3 ${currentStep === 0 ? 'bg-red-600' : 'bg-gray-400'}`}>1</div>
+                  <span className={`font-semibold ${currentStep === 0 ? 'text-red-700' : 'text-gray-700'}`}>Validación usuario</span>
+                </div>
+                <div className="flex items-center mb-4">
+                  <div className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold mr-3 ${currentStep === 1 ? 'bg-red-600' : 'bg-gray-400'}`}>2</div>
+                  <span className={`font-semibold ${currentStep === 1 ? 'text-red-700' : 'text-gray-700'}`}>Verificación código</span>
+                </div>
+                <div className="flex items-center">
+                  <div className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold mr-3 ${currentStep === 2 ? 'bg-red-600' : 'bg-gray-400'}`}>3</div>
+                  <span className={`font-semibold ${currentStep === 2 ? 'text-red-700' : 'text-gray-700'}`}>Cambio clave</span>
+                </div>
+              </div>
+              <Box>
+                {currentStep === 0 && (
+                  <>
+                    {message && (
+                      <Alert status={message.toLowerCase().includes('código') ? 'success' : 'error'} mt={4} borderRadius="md">
+                        <AlertTitle>{message}</AlertTitle>
+                      </Alert>
+                    )}
                     <Text className="block text-gray-700 text-sm font-bold mb-8">Escriba el usuario que usa para ingresar a la aplicación</Text>
-                    <input
+                    <Input
                       className="bg-white w-full text-black px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                       type="text"
-                      id="username"
-                      name="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       placeholder="Ingrese su usuario"
                       required
-                      onInvalid={(e) =>
-                        (e.target as HTMLInputElement).setCustomValidity('Por favor ingrese su usuario')
-                      }
-                      onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                     />
-                  </div>
-                  </Steps.Content>
-                  <Steps.Content key="1" index={1}>
-                  <Text className="block text-gray-700 text-sm font-bold mb-8">Se envió un mensaje al correo electrónico registrado. Digite el código de verificación.</Text>
-                    <PinInput.Root size="lg">
-                      <PinInput.HiddenInput />
-                      <PinInput.Control>
-                        <PinInput.Input index={0} />
-                        <PinInput.Input index={1} />
-                        <PinInput.Input index={2} />
-                        <PinInput.Input index={3} />
-                      </PinInput.Control>
-                    </PinInput.Root>
-                  </Steps.Content>
-                  <Steps.Content key="2" index={2}>
-                    description 3
-                  </Steps.Content>
-                <Steps.CompletedContent>Recuperación de clave exitosa</Steps.CompletedContent>
-
-                <ButtonGroup size="sm" variant="outline">
-                  <Steps.PrevTrigger asChild>
-                    <Button>Anterior</Button>
-                  </Steps.PrevTrigger>
-                  <Steps.NextTrigger asChild>
-                    <Button>Siguiente</Button>
-                  </Steps.NextTrigger>
-                </ButtonGroup>
-              </Stack>
-            </Steps.Root>
-
-            <div className="w-full hidden max-w-md p-6 md:p-18 md:m-12 bg-white shadow-lg rounded-lg">
-              {errorMessage && (
-                <div className="mb-4 text-red-600 text-sm font-medium bg-red-100 p-2 rounded">
-                  {errorMessage}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Usuario</label>
-                  <input
-                    className="bg-white w-full text-black px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Ingrese su usuario"
-                    required
-                    onInvalid={(e) =>
-                      (e.target as HTMLInputElement).setCustomValidity('Por favor ingrese su usuario')
-                    }
-                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
-                  />
-                </div>
-                <button className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg" type="submit">Enviar código</button>
-              </form>
+                    <Button mt={4} colorScheme="red" onClick={handleVerificarUsuario}>Siguiente</Button>
+                  </>
+                )}
+                {currentStep === 1 && (
+                  <>
+                    {message && (
+                      <Alert status={message.toLowerCase().includes('código') ? 'success' : 'error'} mt={4} borderRadius="md">
+                        <AlertTitle>{message}</AlertTitle>
+                      </Alert>
+                    )}
+                    <div className="flex gap-3 mb-4 justify-center">
+                      {[0, 1, 2, 3].map((i) => (
+                        <input
+                          key={i}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          className="w-14 h-14 text-center text-2xl border-2 border-gray-300 rounded-lg shadow focus:outline-none focus:border-red-500 transition-all bg-white"
+                          value={codigoVerificacion[i] || ''}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '');
+                            let newCode = codigoVerificacion.split('');
+                            newCode[i] = val;
+                            setCodigoVerificacion(newCode.join('').slice(0, 4));
+                            // Mover foco al siguiente input
+                            if (val && i < 3) {
+                              const nextInput = document.getElementById(`code-input-${i + 1}`);
+                              if (nextInput) (nextInput as HTMLInputElement).focus();
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Backspace' && !codigoVerificacion[i] && i > 0) {
+                              const prevInput = document.getElementById(`code-input-${i - 1}`);
+                              if (prevInput) (prevInput as HTMLInputElement).focus();
+                            }
+                          }}
+                          id={`code-input-${i}`}
+                          autoFocus={i === 0}
+                        />
+                      ))}
+                    </div>
+                    <Button colorScheme="red" onClick={handleVerificarCodigo}>Siguiente</Button>
+                  </>
+                )}
+                {currentStep === 2 && (
+                  <>
+                    {!success ? (
+                      <>
+                        {message && (
+                          <Alert status={message.toLowerCase().includes('actualizada') ? 'success' : 'error'} mt={4} borderRadius="md">
+                            <AlertTitle>{message}</AlertTitle>
+                          </Alert>
+                        )}
+                        <div className="space-y-4">
+                          <div>
+                            <Text className="block text-gray-700 text-sm font-bold mb-2">Nueva contraseña</Text>
+                            <Input
+                              type="password"
+                              value={nuevaContrasena}
+                              onChange={(e) => setNuevaContrasena(e.target.value)}
+                              placeholder="Ingrese su nueva contraseña"
+                              className="bg-white border-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-500"
+                            />
+                            <ul className="mt-2 space-y-1 text-sm">
+                              <li className={nuevaContrasena.length >= 8 ? "text-green-600 flex items-center" : "text-gray-700 flex items-center"}>
+                                <span className="mr-2">{nuevaContrasena.length >= 8 ? "✔️" : "⬜"}</span>
+                                Mínimo 8 caracteres
+                              </li>
+                              <li className={/[A-Z]/.test(nuevaContrasena) ? "text-green-600 flex items-center" : "text-gray-700 flex items-center"}>
+                                <span className="mr-2">{/[A-Z]/.test(nuevaContrasena) ? "✔️" : "⬜"}</span>
+                                Al menos una mayúscula
+                              </li>
+                              <li className={/\d/.test(nuevaContrasena) ? "text-green-600 flex items-center" : "text-gray-700 flex items-center"}>
+                                <span className="mr-2">{/\d/.test(nuevaContrasena) ? "✔️" : "⬜"}</span>
+                                Al menos un número
+                              </li>
+                            </ul>
+                          </div>
+                          <div>
+                            <Text className="block text-gray-700 text-sm font-bold mb-2">Confirmar contraseña</Text>
+                            <Input
+                              type="password"
+                              value={confirmarContrasena}
+                              onChange={(e) => setConfirmarContrasena(e.target.value)}
+                              placeholder="Confirme su nueva contraseña"
+                              className="bg-white border-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-500"
+                            />
+                            {confirmarContrasena && confirmarContrasena !== nuevaContrasena && (
+                              <div className="text-red-600 text-xs mt-1">Las contraseñas no coinciden</div>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          mt={4}
+                          colorScheme="red"
+                          onClick={handleActualizarContrasena}
+                          disabled={
+                            !(
+                              nuevaContrasena.length >= 8 &&
+                              /[A-Z]/.test(nuevaContrasena) &&
+                              /\d/.test(nuevaContrasena) &&
+                              nuevaContrasena === confirmarContrasena
+                            )
+                          }
+                        >
+                          Cambiar clave
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Alert status="success" mt={4} borderRadius="md">
+                          <AlertTitle>{message}</AlertTitle>
+                        </Alert>
+                        <Button mt={4} colorScheme="green" onClick={() => router.push('/')}>Aceptar</Button>
+                      </>
+                    )}
+                  </>
+                )}
+              </Box>
             </div>
           </div>
         </div>

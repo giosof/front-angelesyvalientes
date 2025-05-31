@@ -21,9 +21,10 @@ export const apiFetch = async (
         headers,
       });
 
-      if (response.status == 402) {
+      if (response.status == 401) {
         // Token inválido o expirado, eliminarlo de sesión
         sessionStorage.removeItem('token');
+        window.location.href = '/'; // Redirigir al login
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
       }
   
@@ -714,7 +715,7 @@ export const actualizarContrasena = async (cdUsuario: string, codigoVerificacion
         codigoVerificacion,
         nuevaContrasena
       }),
-    });
+    }, 'text');
 
     return response;
   } catch (error) {
